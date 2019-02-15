@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
                 if (mIsRecording) {
                     mIsRecording = false;
                     mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
-//                    mMediaRecorder.stop();
-//                    mMediaRecorder.reset();
+                    mMediaRecorder.stop();
+                    mMediaRecorder.reset();
                     startPreview();
                 } else {
                     checkWriteStoragePermission();
