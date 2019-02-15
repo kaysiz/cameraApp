@@ -3,6 +3,7 @@ package com.example.cricket;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -11,6 +12,8 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Environment;
@@ -20,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -39,6 +43,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -135,7 +140,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        UsbManager m = (UsbManager)getApplicationContext().getSystemService(USB_SERVICE);
+        HashMap<String, UsbDevice> devices = m.getDeviceList();
+        Collection<UsbDevice> ite = devices.values();
+        UsbDevice[] usbs = ite.toArray(new UsbDevice[]{});
+        for (UsbDevice usb : usbs){
+            Toast.makeText(getApplicationContext(), usb.getDeviceName(), Toast.LENGTH_SHORT).show();
+        }
         createVideoFolder();
 
         mMediaRecorder = new MediaRecorder();
@@ -223,9 +234,12 @@ public class MainActivity extends AppCompatActivity {
         try {
             for (String cameraId : cameraManager.getCameraIdList()) {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
+//                Toast.makeText(getApplicationContext(),cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) , Toast.LENGTH_SHORT).show();
+
                 if (cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) {
                     continue;
                 }
+                Toast.makeText(this, String.valueOf(cameraManager.getCameraIdList().length), Toast.LENGTH_SHORT).show();
                 StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 int deviceOrientation = getWindowManager().getDefaultDisplay().getRotation();
                 mTotalRotation = sensorToDeviceRotation(cameraCharacteristics, deviceOrientation);
