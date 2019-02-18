@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private CameraDevice.StateCallback mCameraDeviceStateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
-            
+
             mCameraDevice = camera;
             if (mIsRecording) {
                 try {
@@ -402,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
     private void createVideoFolder() {
         File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
         mVideoFolder = new File(movieFile, "codehesionCrikect");
-        if (mVideoFolder.exists()) {
+        if (!mVideoFolder.exists()) {
             mVideoFolder.mkdirs();
         }
     }

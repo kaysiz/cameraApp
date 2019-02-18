@@ -24,4 +24,5 @@
         android:layout_marginTop="513dp"
         android:contentDescription="@string/video_button"
         app:srcCompat="@mipmap/btn_video_online" />
+
 </RelativeLayout>
