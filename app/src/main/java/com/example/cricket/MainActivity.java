@@ -2,6 +2,7 @@ package com.example.cricket;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
 import android.graphics.SurfaceTexture;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,8 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -88,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 startRecord();
                 mMediaRecorder.start();
+                mChronometer.setBase(SystemClock.elapsedRealtime());
+                mChronometer.setVisibility(View.VISIBLE);
+                mChronometer.start();
             } else {
                 startPreview();
             }
@@ -111,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
     private Size mPreviewSize;
     private Size mVideoSize;
     private MediaRecorder mMediaRecorder;
+    private Chronometer mChronometer;
     private int mTotalRotation;
+    private Button mButton;
     private CaptureRequest.Builder mCaptureRequestBuilder;
     private ImageButton mRecordImageButton;
     private boolean mIsRecording = false;
@@ -140,31 +149,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        UsbManager m = (UsbManager)getApplicationContext().getSystemService(USB_SERVICE);
-        HashMap<String, UsbDevice> devices = m.getDeviceList();
-        Collection<UsbDevice> ite = devices.values();
-        UsbDevice[] usbs = ite.toArray(new UsbDevice[]{});
-        for (UsbDevice usb : usbs){
-            Toast.makeText(getApplicationContext(), usb.getDeviceName(), Toast.LENGTH_SHORT).show();
-        }
+//        UsbManager m = (UsbManager)getApplicationContext().getSystemService(USB_SERVICE);
+//        HashMap<String, UsbDevice> devices = m.getDeviceList();
+//        Collection<UsbDevice> ite = devices.values();
+//        UsbDevice[] usbs = ite.toArray(new UsbDevice[]{});
+//        for (UsbDevice usb : usbs){
+//            Toast.makeText(getApplicationContext(), usb.getDeviceName(), Toast.LENGTH_SHORT).show();
+//        }
+        mButton = findViewById(R.id.button);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openVideoPlayer();
+            }
+        });
+
         createVideoFolder();
 
         mMediaRecorder = new MediaRecorder();
 
-        mTextureView = (TextureView) findViewById(R.id.textureView);
-        mRecordImageButton = (ImageButton) findViewById(R.id.videoOnlineImageButton);
+        mChronometer = findViewById(R.id.chronometer);
+        mTextureView = findViewById(R.id.textureView);
+        mRecordImageButton = findViewById(R.id.videoOnlineImageButton);
         mRecordImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mIsRecording) {
+                    mChronometer.stop();
+                    mChronometer.setVisibility(View.INVISIBLE);
                     mIsRecording = false;
+                    mButton.setEnabled(true);
                     mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
                     mMediaRecorder.stop();
                     mMediaRecorder.reset();
                     startPreview();
                 } else {
                     checkWriteStoragePermission();
-                    Toast.makeText(getApplicationContext(), "Yeah so what?", Toast.LENGTH_SHORT).show();
+                    mButton.setEnabled(false);
                 }
             }
         });
@@ -190,6 +211,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CAMERA_PERMISSION_RESULT) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(getApplicationContext(), "Application will not run without camera services", Toast.LENGTH_SHORT).show();
+            }
+            if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getApplicationContext(), "Application will not have audio services", Toast.LENGTH_SHORT).show();
             }
         }
         if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT) {
@@ -270,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                         Toast.makeText(this, "Video app requires access to camera", Toast.LENGTH_SHORT).show();
                     }
-                    requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION_RESULT);
+                    requestPermissions(new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, REQUEST_CAMERA_PERMISSION_RESULT);
                 }
             } else {
                 cameraManager.openCamera(mCameraId, mCameraDeviceStateCallback, mBackgroundHandler);
@@ -401,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createVideoFolder() {
         File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        mVideoFolder = new File(movieFile, "codehesionCrikect");
+        mVideoFolder = new File(movieFile, "codehesionCricket");
         if (!mVideoFolder.exists()) {
             mVideoFolder.mkdirs();
         }
@@ -428,6 +452,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 startRecord();
                 mMediaRecorder.start();
+                mChronometer.setBase(SystemClock.elapsedRealtime());
+                mChronometer.setVisibility(View.VISIBLE);
+                mChronometer.start();
             } else {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     Toast.makeText(this, "app needs to be able to save videos", Toast.LENGTH_SHORT).show();
@@ -444,6 +471,9 @@ public class MainActivity extends AppCompatActivity {
             }
             startRecord();
             mMediaRecorder.start();
+            mChronometer.setBase(SystemClock.elapsedRealtime());
+            mChronometer.setVisibility(View.VISIBLE);
+            mChronometer.start();
         }
     }
     private void setupMediaRecorder() throws IOException {
@@ -458,5 +488,10 @@ public class MainActivity extends AppCompatActivity {
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mMediaRecorder.setOrientationHint(mTotalRotation);
         mMediaRecorder.prepare();
+    }
+
+    private void openVideoPlayer() {
+        Intent intent = new Intent(this, VideoPlayer.class);
+        startActivity(intent);
     }
 }

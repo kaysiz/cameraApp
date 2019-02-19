@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Cricket</string>
     <string name="video_button">Video Record Button</string>
+    <string name="video_player">Video Player</string>
+    <string name="hello_there">Hello there</string>
+    <string name="record">Record</string>
 </resources>
