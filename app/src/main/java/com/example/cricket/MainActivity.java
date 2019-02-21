@@ -150,15 +150,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        UsbManager m = (UsbManager)getApplicationContext().getSystemService(USB_SERVICE);
-//        HashMap<String, UsbDevice> devices = m.getDeviceList();
-//        Collection<UsbDevice> ite = devices.values();
-//        UsbDevice[] usbs = ite.toArray(new UsbDevice[]{});
-//        for (UsbDevice usb : usbs){
-//            Toast.makeText(getApplicationContext(), usb.getDeviceName(), Toast.LENGTH_SHORT).show();
-//        }
-//        File movieFilesd = Environment.getExternalStoragePublicDirectory();
-//        mTest = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath(), "codehesionCricket");
         mButton = findViewById(R.id.button);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -428,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createVideoFolder() {
         File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        mVideoFolder = new File(movieFile, "codehesionCricket");
+        mVideoFolder = new File(movieFile, getString(R.string.app_name));
         if (!mVideoFolder.exists()) {
             mVideoFolder.mkdirs();
         }

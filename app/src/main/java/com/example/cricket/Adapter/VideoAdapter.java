@@ -1,6 +1,8 @@
 package com.example.cricket.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.cricket.Model.VideoModel;
+import com.example.cricket.PlayVideoActivity;
 import com.example.cricket.R;
 
 import java.util.ArrayList;
@@ -20,10 +24,12 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
 
     Context context;
     ArrayList<VideoModel> arrayListVideos;
-    public VideoAdapter(Context context, ArrayList<VideoModel> arrayListVideos) {
+    Activity activity;
+    public VideoAdapter(Context context, ArrayList<VideoModel> arrayListVideos, Activity activity) {
 
         this.context = context;
         this.arrayListVideos = arrayListVideos;
+        this.activity = activity;
     }
 
     @Override
@@ -33,13 +39,22 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
         Glide.with(context).load("file://" + arrayListVideos.get(position).getStr_thumb())
                 .skipMemoryCache(false)
                 .into(holder.imageView);
         holder.r1_select.setBackgroundColor(Color.parseColor("#FFFFFF"));
         holder.r1_select.setAlpha(0);
+
+        holder.r1_select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, PlayVideoActivity.class);
+                i.putExtra("video", arrayListVideos.get(position).getStr_path());
+                activity.startActivity(i);
+            }
+        });
 
     }
 
@@ -55,8 +70,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
 
         public ViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView)itemView.findViewById(R.id.iv_image);
-            r1_select = (RelativeLayout)itemView.findViewById(R.id.r1_select);
+            imageView = itemView.findViewById(R.id.iv_image);
+            r1_select = itemView.findViewById(R.id.r1_select);
         }
     }
 }

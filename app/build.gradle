@@ -33,4 +33,5 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.github.jiangdongguo:AndroidUSBCamera:2.2.8'
 }
