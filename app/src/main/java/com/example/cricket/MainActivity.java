@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsRecording = false;
 
     private File mVideoFolder;
+    private File mTest;
     private String mVideoFileName;
 
     private static SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -156,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
 //        for (UsbDevice usb : usbs){
 //            Toast.makeText(getApplicationContext(), usb.getDeviceName(), Toast.LENGTH_SHORT).show();
 //        }
+//        File movieFilesd = Environment.getExternalStoragePublicDirectory();
+//        mTest = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath(), "codehesionCricket");
         mButton = findViewById(R.id.button);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -491,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openVideoPlayer() {
-        Intent intent = new Intent(this, VideoPlayer.class);
+        Intent intent = new Intent(this, VideoPlayerPlaylist.class);
         startActivity(intent);
     }
 }
