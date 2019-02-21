@@ -52,7 +52,7 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
 
         String orderby = MediaStore.Images.Media.DATE_TAKEN;
 
-        cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{" %codehesion%"},orderby + " DESC");
+        cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{"%codehesionCricket%"},orderby + " DESC");
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
