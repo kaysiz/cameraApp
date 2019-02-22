@@ -2,11 +2,11 @@ package com.example.cricket;
 
 import android.hardware.usb.UsbDevice;
 import android.os.Looper;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,11 +38,11 @@ import butterknife.ButterKnife;
 public class FairView extends AppCompatActivity implements CameraDialog.CameraDialogParent, CameraViewInterface.Callback{
 
     private static final String TAG = "Debug";
-    public View mTextureView = findViewById(R.id.camera_view);
-    public Toolbar mToolbar = findViewById(R.id.toolbar);
-    public SeekBar mSeekBrightness = findViewById(R.id.seekbar_brightness);
-    public SeekBar mSeekContrast = findViewById(R.id.seekbar_contrast);
-    public Switch mSwitchVoice = findViewById(R.id.switch_rec_voice);
+    public View mTextureView;
+    public Toolbar mToolbar;
+    public SeekBar mSeekBrightness;
+    public SeekBar mSeekContrast;
+    public Switch mSwitchVoice;
 
     private UVCCameraHelper mCameraHelper;
     private CameraViewInterface mUVCCameraView;
@@ -118,7 +118,13 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fair_view);
         ButterKnife.bind(this);
-        initView();
+//        initView();
+
+        mTextureView = findViewById(R.id.camera_view);
+        mToolbar = findViewById(R.id.toolbar);
+        mSeekBrightness = findViewById(R.id.seekbar_brightness);
+        mSeekContrast = findViewById(R.id.seekbar_contrast);
+        mSwitchVoice = findViewById(R.id.switch_rec_voice);
 
         // step.1 initialize UVCCameraHelper
         mUVCCameraView = (CameraViewInterface) mTextureView;
@@ -139,7 +145,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
     private void initView() {
         setSupportActionBar(mToolbar);
 
-        mSeekBrightness.setMax(100);
+//        mSeekBrightness.setMax(100);
         mSeekBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
