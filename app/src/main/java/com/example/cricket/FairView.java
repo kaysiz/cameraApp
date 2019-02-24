@@ -1,23 +1,23 @@
 package com.example.cricket;
 
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.os.Environment;
 import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.os.SystemClock;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.SeekBar;
-import android.widget.Switch;
+import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.jiangdg.usbcamera.UVCCameraHelper;
@@ -29,6 +29,7 @@ import com.serenegiant.usb.common.AbstractUVCCameraHandler;
 import com.serenegiant.usb.encoder.RecordParams;
 import com.serenegiant.usb.widget.CameraViewInterface;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +41,15 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
     private static final String TAG = "Debug";
     public View mTextureView;
     public Toolbar mToolbar;
-    public SeekBar mSeekBrightness;
-    public SeekBar mSeekContrast;
-    public Switch mSwitchVoice;
 
     private UVCCameraHelper mCameraHelper;
     private CameraViewInterface mUVCCameraView;
     private AlertDialog mDialog;
+    private ImageButton mRecordImageButton;
+    private Button mButton;
+
+    private Chronometer mChronometer;
+    private File mVideoFolder;
 
     private boolean isRequest;
     private boolean isPreview;
@@ -97,10 +100,6 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                             e.printStackTrace();
                         }
                         Looper.prepare();
-                        if(mCameraHelper != null && mCameraHelper.isCameraOpened()) {
-                            mSeekBrightness.setProgress(mCameraHelper.getModelValue(UVCCameraHelper.MODE_BRIGHTNESS));
-                            mSeekContrast.setProgress(mCameraHelper.getModelValue(UVCCameraHelper.MODE_CONTRAST));
-                        }
                         Looper.loop();
                     }
                 }).start();
@@ -118,13 +117,18 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fair_view);
         ButterKnife.bind(this);
-//        initView();
+        initView();
 
         mTextureView = findViewById(R.id.camera_view);
         mToolbar = findViewById(R.id.toolbar);
-        mSeekBrightness = findViewById(R.id.seekbar_brightness);
-        mSeekContrast = findViewById(R.id.seekbar_contrast);
-        mSwitchVoice = findViewById(R.id.switch_rec_voice);
+
+        mButton = findViewById(R.id.button);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openVideoPlayer();
+            }
+        });
 
         // step.1 initialize UVCCameraHelper
         mUVCCameraView = (CameraViewInterface) mTextureView;
@@ -140,49 +144,21 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
 
             }
         });
+
+        mChronometer = findViewById(R.id.chronometer);
+        mTextureView = findViewById(R.id.textureView);
+        mRecordImageButton = findViewById(R.id.videoOnlineImageButton);
+        mRecordImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createVideoFolder();
+                startRecording();
+            }
+        });
     }
 
     private void initView() {
         setSupportActionBar(mToolbar);
-
-//        mSeekBrightness.setMax(100);
-        mSeekBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mCameraHelper != null && mCameraHelper.isCameraOpened()) {
-                    mCameraHelper.setModelValue(UVCCameraHelper.MODE_BRIGHTNESS,progress);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        mSeekContrast.setMax(100);
-        mSeekContrast.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mCameraHelper != null && mCameraHelper.isCameraOpened()) {
-                    mCameraHelper.setModelValue(UVCCameraHelper.MODE_CONTRAST,progress);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
     }
 
     @Override
@@ -204,42 +180,26 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_toobar, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_takepic:
-                if (mCameraHelper == null || !mCameraHelper.isCameraOpened()) {
-                    showShortMsg("sorry,camera open failed");
-                    return super.onOptionsItemSelected(item);
-                }
-                String picPath = UVCCameraHelper.ROOT_PATH + System.currentTimeMillis()
-                        + UVCCameraHelper.SUFFIX_JPEG;
-                mCameraHelper.capturePicture(picPath, new AbstractUVCCameraHandler.OnCaptureListener() {
-                    @Override
-                    public void onCaptureResult(String path) {
-                        Log.i(TAG,"save path：" + path);
-                    }
-                });
-
-                break;
             case R.id.menu_recording:
                 if (mCameraHelper == null || !mCameraHelper.isCameraOpened()) {
                     showShortMsg("sorry,camera open failed");
-                    return super.onOptionsItemSelected(item);
+                    String videoPath = UVCCameraHelper.ROOT_PATH + System.currentTimeMillis();
+                    Log.i(TAG,"videoPathzzz = "+UVCCameraHelper.ROOT_PATH);
+                    break;
                 }
                 if (!mCameraHelper.isPushing()) {
                     String videoPath = UVCCameraHelper.ROOT_PATH + System.currentTimeMillis();
-                    FileUtils.createfile(FileUtils.ROOT_PATH + "test666.h264");
+                    FileUtils.createfile(FileUtils.ROOT_PATH + "test667.h264");
+                    mRecordImageButton.setImageResource(R.mipmap.btn_video_busy);
+                    mChronometer.setBase(SystemClock.elapsedRealtime());
+                    mChronometer.setVisibility(View.VISIBLE);
+                    mChronometer.start();
                     // if you want to record,please create RecordParams like this
                     RecordParams params = new RecordParams();
                     params.setRecordPath(videoPath);
-                    params.setRecordDuration(0);                        // 设置为0，不分割保存
-                    params.setVoiceClose(mSwitchVoice.isChecked());    // is close voice
+                    params.setRecordDuration(0);
                     mCameraHelper.startPusher(params, new AbstractUVCCameraHandler.OnEncodeResultListener() {
                         @Override
                         public void onEncodeResult(byte[] data, int offset, int length, long timestamp, int type) {
@@ -261,45 +221,17 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                     // if you only want to push stream,please call like this
                     // mCameraHelper.startPusher(listener);
                     showShortMsg("start record...");
-                    mSwitchVoice.setEnabled(false);
                 } else {
                     FileUtils.releaseFile();
                     mCameraHelper.stopPusher();
+                    mChronometer.stop();
+                    mChronometer.setVisibility(View.INVISIBLE);
+                    mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
                     showShortMsg("stop record...");
-                    mSwitchVoice.setEnabled(true);
                 }
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showResolutionListDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(FairView.this);
-        View rootView = LayoutInflater.from(FairView.this).inflate(R.layout.layout_dialog_list, null);
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_dialog);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(FairView.this, android.R.layout.simple_list_item_1, getResolutionList());
-        if (adapter != null) {
-            listView.setAdapter(adapter);
-        }
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (mCameraHelper == null || !mCameraHelper.isCameraOpened())
-                    return;
-                final String resolution = (String) adapterView.getItemAtPosition(position);
-                String[] tmp = resolution.split("x");
-                if (tmp != null && tmp.length >= 2) {
-                    int widht = Integer.valueOf(tmp[0]);
-                    int height = Integer.valueOf(tmp[1]);
-                    mCameraHelper.updateResolution(widht, height);
-                }
-                mDialog.dismiss();
-            }
-        });
-
-        builder.setView(rootView);
-        mDialog = builder.create();
-        mDialog.show();
     }
 
     // example: {640x480,320x240,etc}
@@ -366,5 +298,66 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
             mCameraHelper.stopPreview();
             isPreview = false;
         }
+    }
+
+    private void startRecording() {
+        if (mCameraHelper == null || !mCameraHelper.isCameraOpened()) {
+            showShortMsg("sorry,camera open failed");
+            String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/" + System.currentTimeMillis();
+            Log.i(TAG,"videoPathzzz = "+ videoPath);
+            Log.i(TAG,"videoPathzzz = "+ mVideoFolder.toString());
+        }
+        else {
+            if (!mCameraHelper.isPushing()) {
+                String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/" + System.currentTimeMillis();
+                mButton.setEnabled(false);
+                mRecordImageButton.setImageResource(R.mipmap.btn_video_busy);
+                mChronometer.setBase(SystemClock.elapsedRealtime());
+                mChronometer.setVisibility(View.VISIBLE);
+                mChronometer.start();
+                // if you want to record,please create RecordParams like this
+                RecordParams params = new RecordParams();
+                params.setRecordPath(videoPath);
+                params.setRecordDuration(0);
+                mCameraHelper.startPusher(params, new AbstractUVCCameraHandler.OnEncodeResultListener() {
+                    @Override
+                    public void onEncodeResult(byte[] data, int offset, int length, long timestamp, int type) {
+                        // type = 1,h264 video stream
+                        if (type == 1) {
+                            FileUtils.putFileStream(data, offset, length);
+                        }
+                    }
+
+                    @Override
+                    public void onRecordResult(String videoPath) {
+                        Log.i(TAG,"videoPath = "+videoPath);
+                    }
+                });
+                // if you only want to push stream,please call like this
+                // mCameraHelper.startPusher(listener);
+                showShortMsg("start record...");
+            } else {
+                FileUtils.releaseFile();
+                mCameraHelper.stopPusher();
+                mButton.setEnabled(true);
+                mChronometer.stop();
+                mChronometer.setVisibility(View.INVISIBLE);
+                mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
+                showShortMsg("stop record...");
+            }
+        }
+    }
+
+    private void createVideoFolder() {
+        File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        mVideoFolder = new File(movieFile, getString(R.string.app_name));
+        if (!mVideoFolder.exists()) {
+            mVideoFolder.mkdirs();
+        }
+    }
+
+    private void openVideoPlayer() {
+        Intent intent = new Intent(this, VideoPlayerPlaylist.class);
+        startActivity(intent);
     }
 }
