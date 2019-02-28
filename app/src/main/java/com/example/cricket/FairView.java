@@ -3,6 +3,7 @@ package com.example.cricket;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +33,8 @@ import com.serenegiant.usb.widget.CameraViewInterface;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 
@@ -39,6 +42,7 @@ import butterknife.ButterKnife;
 public class FairView extends AppCompatActivity implements CameraDialog.CameraDialogParent, CameraViewInterface.Callback{
 
     private static final String TAG = "Debug";
+    private static final int TIME_DIFFERENCE = 10 * 60 * 1000;
     public View mTextureView;
     public Toolbar mToolbar;
 
@@ -46,6 +50,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
     private CameraViewInterface mUVCCameraView;
     private AlertDialog mDialog;
     private ImageButton mRecordImageButton;
+    private ImageButton mStopRecord;
     private Button mButton;
 
     private Chronometer mChronometer;
@@ -53,6 +58,9 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
 
     private boolean isRequest;
     private boolean isPreview;
+    private boolean isRecording = false;
+
+    final Handler handler = new Handler();
 
     private UVCCameraHelper.OnMyDevConnectListener listener = new UVCCameraHelper.OnMyDevConnectListener() {
 
@@ -108,6 +116,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
 
         @Override
         public void onDisConnectDev(UsbDevice device) {
+
             showShortMsg("disconnecting");
         }
     };
@@ -117,7 +126,11 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fair_view);
         ButterKnife.bind(this);
-        initView();
+//        mStopRecord = findViewById(R.id.videoOffLineImageButton);
+//        mStopRecord.setEnabled(false);
+//        mStopRecord.setVisibility(View.INVISIBLE);
+//        initView();
+//        callAsynchronousTask();
 
         mTextureView = findViewById(R.id.camera_view);
         mToolbar = findViewById(R.id.toolbar);
@@ -152,13 +165,13 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
             @Override
             public void onClick(View v) {
                 createVideoFolder();
-                startRecording();
+                if (isRecording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
             }
         });
-    }
-
-    private void initView() {
-        setSupportActionBar(mToolbar);
     }
 
     @Override
@@ -177,76 +190,6 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         if (mCameraHelper != null) {
             mCameraHelper.unregisterUSB();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_recording:
-                if (mCameraHelper == null || !mCameraHelper.isCameraOpened()) {
-                    showShortMsg("sorry,camera open failed");
-                    String videoPath = UVCCameraHelper.ROOT_PATH + System.currentTimeMillis();
-                    Log.i(TAG,"videoPathzzz = "+UVCCameraHelper.ROOT_PATH);
-                    break;
-                }
-                if (!mCameraHelper.isPushing()) {
-                    String videoPath = UVCCameraHelper.ROOT_PATH + System.currentTimeMillis();
-                    FileUtils.createfile(FileUtils.ROOT_PATH + "test667.h264");
-                    mRecordImageButton.setImageResource(R.mipmap.btn_video_busy);
-                    mChronometer.setBase(SystemClock.elapsedRealtime());
-                    mChronometer.setVisibility(View.VISIBLE);
-                    mChronometer.start();
-                    // if you want to record,please create RecordParams like this
-                    RecordParams params = new RecordParams();
-                    params.setRecordPath(videoPath);
-                    params.setRecordDuration(0);
-                    mCameraHelper.startPusher(params, new AbstractUVCCameraHandler.OnEncodeResultListener() {
-                        @Override
-                        public void onEncodeResult(byte[] data, int offset, int length, long timestamp, int type) {
-                            // type = 1,h264 video stream
-                            if (type == 1) {
-                                FileUtils.putFileStream(data, offset, length);
-                            }
-                            // type = 0,aac audio stream
-                            if(type == 0) {
-
-                            }
-                        }
-
-                        @Override
-                        public void onRecordResult(String videoPath) {
-                            Log.i(TAG,"videoPath = "+videoPath);
-                        }
-                    });
-                    // if you only want to push stream,please call like this
-                    // mCameraHelper.startPusher(listener);
-                    showShortMsg("start record...");
-                } else {
-                    FileUtils.releaseFile();
-                    mCameraHelper.stopPusher();
-                    mChronometer.stop();
-                    mChronometer.setVisibility(View.INVISIBLE);
-                    mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
-                    showShortMsg("stop record...");
-                }
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    // example: {640x480,320x240,etc}
-    private List<String> getResolutionList() {
-        List<Size> list = mCameraHelper.getSupportedPreviewSizes();
-        List<String> resolutions = null;
-        if (list != null && list.size() != 0) {
-            resolutions = new ArrayList<>();
-            for (Size size : list) {
-                if (size != null) {
-                    resolutions.add(size.width + "x" + size.height);
-                }
-            }
-        }
-        return resolutions;
     }
 
     @Override
@@ -271,7 +214,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
     @Override
     public void onDialogResult(boolean canceled) {
         if (canceled) {
-            showShortMsg("取消操作");
+            showShortMsg("Canceled");
         }
     }
 
@@ -303,14 +246,45 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
     private void startRecording() {
         if (mCameraHelper == null || !mCameraHelper.isCameraOpened()) {
             showShortMsg("sorry,camera open failed");
-            String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/" + System.currentTimeMillis();
-            Log.i(TAG,"videoPathzzz = "+ videoPath);
-            Log.i(TAG,"videoPathzzz = "+ mVideoFolder.toString());
         }
         else {
+            handler.post(runnableCode);
+        }
+    }
+
+    private void createVideoFolder() {
+        File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        mVideoFolder = new File(movieFile, getString(R.string.app_name));
+        if (!mVideoFolder.exists()) {
+            mVideoFolder.mkdirs();
+        }
+    }
+
+    private void stopRecording() {
+        FileUtils.releaseFile();
+        mCameraHelper.stopPusher();
+        mButton.setEnabled(true);
+        mChronometer.stop();
+        mChronometer.setVisibility(View.INVISIBLE);
+        mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
+        showShortMsg("stop record...");
+        isRecording = false;
+        handler.removeCallbacks(runnableCode);
+    }
+
+    private void openVideoPlayer() {
+        Intent intent = new Intent(this, VideoPlayerPlaylist.class);
+        startActivity(intent);
+    }
+
+    // Define the code block to be executed
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
             if (!mCameraHelper.isPushing()) {
                 String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/" + System.currentTimeMillis();
                 mButton.setEnabled(false);
+                isRecording = true;
                 mRecordImageButton.setImageResource(R.mipmap.btn_video_busy);
                 mChronometer.setBase(SystemClock.elapsedRealtime());
                 mChronometer.setVisibility(View.VISIBLE);
@@ -335,7 +309,8 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 });
                 // if you only want to push stream,please call like this
                 // mCameraHelper.startPusher(listener);
-                showShortMsg("start record...");
+                clean_up();
+                showShortMsg("start recording...");
             } else {
                 FileUtils.releaseFile();
                 mCameraHelper.stopPusher();
@@ -343,21 +318,84 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 mChronometer.stop();
                 mChronometer.setVisibility(View.INVISIBLE);
                 mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
-                showShortMsg("stop record...");
+                showShortMsg("stop recording...");
+                handler.removeCallbacks(runnableCode);
+                handler.post(runnableCode);
+            }
+            handler.postDelayed(this, 50000);
+        }
+    };
+
+    private void callAsynchronousTask() {
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        if (!mCameraHelper.isPushing()) {
+                            String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/" + System.currentTimeMillis();
+                            mButton.setEnabled(false);
+                            isRecording = true;
+                            mRecordImageButton.setImageResource(R.mipmap.btn_video_busy);
+                            mChronometer.setBase(SystemClock.elapsedRealtime());
+                            mChronometer.setVisibility(View.VISIBLE);
+                            mChronometer.start();
+                            // if you want to record,please create RecordParams like this
+                            RecordParams params = new RecordParams();
+                            params.setRecordPath(videoPath);
+                            params.setRecordDuration(0);
+                            mCameraHelper.startPusher(params, new AbstractUVCCameraHandler.OnEncodeResultListener() {
+                                @Override
+                                public void onEncodeResult(byte[] data, int offset, int length, long timestamp, int type) {
+                                    // type = 1,h264 video stream
+                                    if (type == 1) {
+                                        FileUtils.putFileStream(data, offset, length);
+                                    }
+                                }
+
+                                @Override
+                                public void onRecordResult(String videoPath) {
+                                    Log.i(TAG,"videoPath = "+videoPath);
+                                }
+                            });
+                            // if you only want to push stream,please call like this
+                            // mCameraHelper.startPusher(listener);
+//                            callAsynchronousTask();
+                            showShortMsg("start recording...");
+                        } else {
+                            FileUtils.releaseFile();
+                            mCameraHelper.stopPusher();
+                            mButton.setEnabled(true);
+                            mChronometer.stop();
+                            mChronometer.setVisibility(View.INVISIBLE);
+                            mRecordImageButton.setImageResource(R.mipmap.btn_video_online);
+                            showShortMsg("stop recording...");
+                            handler.removeCallbacks(null);
+//                stopRecording();
+//                callAsynchronousTask();
+                        }
+//                        handler.postDelayed(this, 10000);
+                    }
+                });
+            }
+        };
+        timer.scheduleAtFixedRate(doAsynchronousTask, 0, 10000); //execute in every 50000 ms
+    }
+
+    private void clean_up() {
+
+        String path = Environment.getExternalStorageDirectory().toString()+"/Movies/" + getString(R.string.app_name);
+        long longAgo = System.currentTimeMillis() - TIME_DIFFERENCE;
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        for (int i = 0; i < files.length; i++)
+        {
+            long file_time = files[i].lastModified();
+            if (file_time < longAgo) {
+                files[i].delete();
             }
         }
     }
 
-    private void createVideoFolder() {
-        File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        mVideoFolder = new File(movieFile, getString(R.string.app_name));
-        if (!mVideoFolder.exists()) {
-            mVideoFolder.mkdirs();
-        }
-    }
-
-    private void openVideoPlayer() {
-        Intent intent = new Intent(this, VideoPlayerPlaylist.class);
-        startActivity(intent);
-    }
 }

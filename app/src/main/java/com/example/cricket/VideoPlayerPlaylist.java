@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.cricket.Adapter.VideoAdapter;
 import com.example.cricket.Model.VideoModel;
@@ -18,12 +19,23 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerviewLayoutManager;
     private ArrayList<VideoModel> arrayListVideos;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player_playlist);
+        swipeRefreshLayout = findViewById(R.id.reload_playlist);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                arrayListVideos = null;
+                fetchVideosFromGallery();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         init();
     }
@@ -52,7 +64,7 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
 
         String orderby = MediaStore.Images.Media.DATE_TAKEN;
 
-        cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{"%Cricket%"},null);
+        cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{"%Cricket%"},orderby);
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
