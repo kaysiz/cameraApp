@@ -18,17 +18,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MenuActivity"></activity>
-        <activity android:name=".PlayVideoActivity" />
         <activity android:name=".VideoPlayerPlaylist" />
         <activity android:name=".VideoPlayer" />
         <activity android:name=".MainActivity" />
         <activity android:name=".HomeActivity">
+        <activity android:name=".FairView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PlayVideoActivity"
+            android:configChanges="orientation" />
+        <activity android:name=".VideoPlayerPlaylist" />
+        <activity android:name=".VideoPlayer" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
