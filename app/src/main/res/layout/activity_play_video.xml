@@ -7,28 +7,34 @@
     tools:context=".PlayVideoActivity">
 
     <VideoView
+        android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/videoView"
-        />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp" />
 
     <ImageView
+        android:id="@+id/toggleButton"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/imageview"
         android:onClick="toggle_method"
-        android:id="@+id/toggleButton"
-        android:src="@drawable/playbutton"
-        android:contentDescription="@string/imageview" />
+        android:src="@drawable/playbutton" />
 
     <SeekBar
+        android:id="@+id/seekbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="70dp"
-        android:id="@+id/seekbar"
-        />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70dp" />
 
 </RelativeLayout>
