@@ -26,19 +26,25 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player_playlist);
-        swipeRefreshLayout = findViewById(R.id.reload_playlist);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                arrayListVideos = null;
-                fetchVideosFromGallery();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+//        swipeRefreshLayout = findViewById(R.id.reload_playlist);
+//
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                arrayListVideos = null;
+//                fetchVideosFromGallery();
+//                swipeRefreshLayout.setRefreshing(true);
+//            }
+//        });
 
         init();
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        init();
+//    }
 
     private void init() {
         recyclerView = findViewById(R.id.videoplayerplaylist);

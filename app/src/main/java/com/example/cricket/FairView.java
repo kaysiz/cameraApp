@@ -42,7 +42,7 @@ import butterknife.ButterKnife;
 public class FairView extends AppCompatActivity implements CameraDialog.CameraDialogParent, CameraViewInterface.Callback{
 
     private static final String TAG = "Debug";
-    private static final int TIME_DIFFERENCE = 10 * 60 * 1000;
+    private static final int TIME_DIFFERENCE = 3 * 60 * 1000;
     public View mTextureView;
     public Toolbar mToolbar;
 
@@ -322,7 +322,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 handler.removeCallbacks(runnableCode);
                 handler.post(runnableCode);
             }
-            handler.postDelayed(this, 50000);
+            handler.postDelayed(this, 60000);
         }
     };
 
