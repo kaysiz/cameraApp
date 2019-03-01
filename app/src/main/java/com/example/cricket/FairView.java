@@ -2,6 +2,8 @@ package com.example.cricket;
 
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -175,6 +177,11 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         // step.2 register USB event broadcast
@@ -311,6 +318,14 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 // mCameraHelper.startPusher(listener);
                 clean_up();
                 showShortMsg("start recording...");
+
+                // Tell MediaStore of the new file
+                MediaScannerConnection.scanFile(FairView.this,
+                        new String[] { videoPath+".mp4" }, null,
+                        new MediaScannerConnection.OnScanCompletedListener() {
+                            public void onScanCompleted(String path, Uri uri) {
+                            }
+                        });
             } else {
                 FileUtils.releaseFile();
                 mCameraHelper.stopPusher();

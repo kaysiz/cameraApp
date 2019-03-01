@@ -2,6 +2,7 @@ package com.example.cricket;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,30 +27,34 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player_playlist);
-//        swipeRefreshLayout = findViewById(R.id.reload_playlist);
-//
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                arrayListVideos = null;
-//                fetchVideosFromGallery();
-//                swipeRefreshLayout.setRefreshing(true);
-//            }
-//        });
-
         init();
+        swipeRefreshLayout = findViewById(R.id.reload_playlist);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                init();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000);
+            }
+        });
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        init();
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        this.recreate();
+    }
 
     private void init() {
         recyclerView = findViewById(R.id.videoplayerplaylist);
         recyclerviewLayoutManager = new GridLayoutManager(getApplicationContext(),2);
         recyclerView.setLayoutManager(recyclerviewLayoutManager);
+        arrayListVideos = null;
         arrayListVideos = new ArrayList<>();
         fetchVideosFromGallery();
 
