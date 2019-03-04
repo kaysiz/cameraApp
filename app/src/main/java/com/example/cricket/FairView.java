@@ -1,12 +1,15 @@
 package com.example.cricket;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +36,7 @@ import com.serenegiant.usb.encoder.RecordParams;
 import com.serenegiant.usb.widget.CameraViewInterface;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -44,6 +48,7 @@ import butterknife.ButterKnife;
 public class FairView extends AppCompatActivity implements CameraDialog.CameraDialogParent, CameraViewInterface.Callback{
 
     private static final String TAG = "Debug";
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT = 1;
     private static final int TIME_DIFFERENCE = 3 * 60 * 1000;
     public View mTextureView;
     public Toolbar mToolbar;
@@ -174,6 +179,20 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 }
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                isRecording = true;
+                mRecordImageButton.setImageResource(R.mipmap.btn_video_busy);
+                Toast.makeText(this, "Permissions succesfully granted!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "App needs to save video to run!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
