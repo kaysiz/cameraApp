@@ -2,11 +2,13 @@ package com.example.cricket;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.cricket.Adapter.VideoAdapter;
 import com.example.cricket.Model.VideoModel;
@@ -18,20 +20,41 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerviewLayoutManager;
     private ArrayList<VideoModel> arrayListVideos;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player_playlist);
-
         init();
+        swipeRefreshLayout = findViewById(R.id.reload_playlist);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                init();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        this.recreate();
     }
 
     private void init() {
         recyclerView = findViewById(R.id.videoplayerplaylist);
         recyclerviewLayoutManager = new GridLayoutManager(getApplicationContext(),2);
         recyclerView.setLayoutManager(recyclerviewLayoutManager);
+        arrayListVideos = null;
         arrayListVideos = new ArrayList<>();
         fetchVideosFromGallery();
 
@@ -52,7 +75,7 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
 
         String orderby = MediaStore.Images.Media.DATE_TAKEN;
 
-        cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{"%Cricket%"},orderby + " DESC");
+        cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{"%Cricket%"},orderby);
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 

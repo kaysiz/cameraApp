@@ -1,83 +1,51 @@
 package com.example.cricket;
 
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.SeekBar;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.MediaController;
 import android.widget.VideoView;
+
+import java.io.File;
+import java.util.Date;
 
 public class PlayVideoActivity extends AppCompatActivity {
 
     private VideoView videoView;
-    private ImageView imageView;
-    private SeekBar seekBar;
     private String str_video_url;
-    private Boolean isPlay = false;
-    private Handler handler;
+    private MediaController mediaController;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
+
+        Date modifiedDate = new Date();
+        String path = Environment.getExternalStorageDirectory().toString()+"/Movies/" + getString(R.string.app_name);
+        Log.d("Files", "Path: " + path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
+        for (int i = 0; i < files.length; i++)
+        {
+            long file_time = files[i].lastModified();
+            long current_time = System.currentTimeMillis();
+            Log.d("Files", "FileName:" + files[i].lastModified() + "current time is " + System.currentTimeMillis());
+        }
         init();
     }
 
+
     private void init() {
         videoView = findViewById(R.id.videoView);
-        imageView = findViewById(R.id.toggleButton);
-        seekBar = findViewById(R.id.seekbar);
         str_video_url = getIntent().getStringExtra("video");
         videoView.setVideoPath(str_video_url);
-        handler = new Handler();
+        mediaController = new MediaController(this);
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
+        mediaController.requestFocus();
         videoView.start();
-        isPlay = true;
-        imageView.setImageResource(R.drawable.pausebutton);
-        updateSeekeBar();
-    }
-
-    private void updateSeekeBar() {
-        handler.postDelayed(updateTimeTask, 100);
-    }
-
-    public Runnable updateTimeTask = new Runnable() {
-        @Override
-        public void run() {
-            seekBar.setProgress(videoView.getCurrentPosition());
-            seekBar.setMax(videoView.getDuration());
-            handler.postDelayed(this, 100);
-            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    handler.removeCallbacks(updateTimeTask);
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    handler.removeCallbacks(updateTimeTask);
-                    videoView.seekTo(seekBar.getProgress());
-                    updateSeekeBar();
-                }
-            });
-        }
-    };
-
-    public void toggle_method(View v) {
-        if (isPlay) {
-            videoView.pause();
-            isPlay = false;
-            imageView.setImageResource(R.drawable.playbutton);
-        }
-        else {
-            videoView.start();
-            updateSeekeBar();
-            isPlay = true;
-            imageView.setImageResource(R.drawable.pausebutton);
-        }
     }
 }
