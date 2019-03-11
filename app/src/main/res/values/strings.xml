@@ -4,5 +4,6 @@
     <string name="video_player">Video Player</string>
     <string name="record">Record</string>
     <string name="todo">todo</string>
+    <string name="media_url_mp4">http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4</string>
     <string name="imageview">imageview</string>
 </resources>
