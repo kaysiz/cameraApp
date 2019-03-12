@@ -92,7 +92,6 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
             if (isRequest) {
                 isRequest = false;
                 mCameraHelper.closeCamera();
-                showShortMsg(device.getDeviceName() + " is out");
             }
         }
 
@@ -103,6 +102,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 isPreview = false;
             } else {
                 isPreview = true;
+                mCameraHelper.startCameraFoucs();
                 showShortMsg("connecting");
                 // initialize seekbar
                 // need to wait UVCCamera initialize over
@@ -156,7 +156,6 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         mCameraHelper = UVCCameraHelper.getInstance();
         mCameraHelper.setDefaultFrameFormat(UVCCameraHelper.FRAME_FORMAT_YUYV);
         mCameraHelper.initUSBMonitor(this, mUVCCameraView, listener);
-
 
         mCameraHelper.setOnPreviewFrameListener(new AbstractUVCCameraHandler.OnPreViewResultListener() {
             @Override
@@ -319,6 +318,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 RecordParams params = new RecordParams();
                 params.setRecordPath(videoPath);
                 params.setRecordDuration(0);
+//                mCameraHelper.updateResolution(1920,1080);
                 mCameraHelper.startPusher(params, new AbstractUVCCameraHandler.OnEncodeResultListener() {
                     @Override
                     public void onEncodeResult(byte[] data, int offset, int length, long timestamp, int type) {

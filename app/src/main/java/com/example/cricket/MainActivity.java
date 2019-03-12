@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
 //                Toast.makeText(getApplicationContext(),cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) , Toast.LENGTH_SHORT).show();
 
-                if (cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) {
+                if (cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK) {
                     continue;
                 }
                 Toast.makeText(this, String.valueOf(cameraManager.getCameraIdList().length), Toast.LENGTH_SHORT).show();
@@ -466,8 +466,9 @@ public class MainActivity extends AppCompatActivity {
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mMediaRecorder.setCaptureRate(30);
         mMediaRecorder.setOutputFile(mVideoFileName);
-        mMediaRecorder.setVideoEncodingBitRate(1000000);
+        mMediaRecorder.setVideoEncodingBitRate(35000000);
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);

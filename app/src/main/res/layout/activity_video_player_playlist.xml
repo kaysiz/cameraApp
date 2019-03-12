@@ -7,18 +7,17 @@
     tools:context=".VideoPlayerPlaylist">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/reload_playlist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/reload_playlist">
+        android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/videoplayerplaylist"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/videoplayerplaylist"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:scrollbars="vertical"
-            >
+            android:scrollbars="vertical">
 
         </androidx.recyclerview.widget.RecyclerView>
 
