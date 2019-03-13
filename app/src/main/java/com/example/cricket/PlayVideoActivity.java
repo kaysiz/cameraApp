@@ -167,6 +167,9 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaplayer) {
+                    int vwidth = mediaPlayer.getVideoWidth();
+                    int vheight = mediaPlayer.getVideoHeight();
+                    mediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
                     mediaplayer.start();
                     mMediaControllerEnable();
                 }
