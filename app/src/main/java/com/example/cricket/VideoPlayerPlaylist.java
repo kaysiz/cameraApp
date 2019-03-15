@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
+
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -27,8 +30,17 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player_playlist);
+
+        ///////
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         init();
         swipeRefreshLayout = findViewById(R.id.reload_playlist);
+
+
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -42,6 +54,15 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
                 }, 2000);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.home) {
+            this.finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
