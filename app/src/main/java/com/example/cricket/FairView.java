@@ -140,7 +140,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
 //        callAsynchronousTask();
 
         mTextureView = findViewById(R.id.camera_view);
-        mToolbar = findViewById(R.id.toolbar);
+//        mToolbar = findViewById(R.id.toolbar);
 
         mButton = findViewById(R.id.button);
         mButton.setOnClickListener(new View.OnClickListener() {

@@ -42,4 +42,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
     implementation 'com.github.jiangdongguo:AndroidUSBCamera:2.2.8'
     implementation 'ua.polohalo.zoomabletextureview:zoomabletextureview:1.0.0'
+    implementation "com.leinardi.android:speed-dial:2.0.1"
 }

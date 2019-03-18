@@ -34,6 +34,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialView;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -105,6 +108,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
     private ImageView imageView;
 
+    private boolean drawing = false;
+
 
     @Override
     public void onCreate(Bundle SavedInstanceState) {
@@ -119,6 +124,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         int weidth = point.x;
         int height = point.y;
 
+
         Bitmap bitmap = Bitmap.createBitmap(weidth , height, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
@@ -126,10 +132,10 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(10);
 
-        imageView = (ImageView)findViewById(R.id.drawlines);
+        imageView = findViewById(R.id.drawlines);
         imageView.setImageBitmap(bitmap);
 
-        imageView.setOnTouchListener(this);
+//        imageView.setOnTouchListener(this);
 
         textureView = findViewById(R.id.videoView);
         back_button = findViewById(R.id.back_btn);
@@ -151,7 +157,37 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 canvas.drawBitmap(bitmap,0,0,paint);
             }
         });
-//        setSpeedOptions();
+        setSpeedOptions();
+        // Action button for different modes
+        SpeedDialView speedDialView = findViewById(R.id.speedDial);
+        speedDialView.inflate(R.menu.menu_speed_dial);
+        speedDialView.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
+            @Override
+            public boolean onActionSelected(SpeedDialActionItem speedDialActionItem) {
+                switch (speedDialActionItem.getId()) {
+                    case R.id.action_zoom:
+
+                        Toast.makeText(getApplicationContext(), "I am draw", Toast.LENGTH_SHORT).show();
+                        return true; // true to keep the Speed Dial open
+                    case R.id.action_draw:
+                        if (drawing) {
+                            imageView.setOnTouchListener(null);
+                            drawing = false;
+                            Toast.makeText(getApplicationContext(), "Drawing mode deactivated!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
+                            drawing = true;
+                            Toast.makeText(getApplicationContext(), "Drawing mode activated, zoom feature deactivated!", Toast.LENGTH_SHORT).show();
+                        }
+                        return false; // true to keep the Speed Dial open
+                    case R.id.action_frame:
+                        Toast.makeText(getApplicationContext(), "I am frame", Toast.LENGTH_SHORT).show();
+                        return true; // true to keep the Speed Dial open
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     @Override
@@ -310,11 +346,11 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
     // speed values displayed in the spinner
     private String[] getSpeedStrings() {
-        return new String[]{"1.0", "1.2", "1.4", "1.6", "1.8", "2.0"};
+        return new String[]{"Speed","0.2", "0.4","0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0"};
     }
 
     private void setSpeedOptions() {
-        final Spinner speedOptions = (Spinner)findViewById(R.id.speedOptions);
+        final Spinner speedOptions = findViewById(R.id.speedOptions);
         String[] speeds = getSpeedStrings();
 
         ArrayAdapter<String> arrayAdapter =  new ArrayAdapter<>(this,
@@ -326,10 +362,12 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (mediaPlayer != null) {
-                    float selectedSpeed = Float.parseFloat(
-                            speedOptions.getItemAtPosition(i).toString());
+                    if (i > 0) {
+                        float selectedSpeed = Float.parseFloat(
+                                speedOptions.getItemAtPosition(i).toString());
 
-                    changeplayerSpeed(selectedSpeed);
+                        changeplayerSpeed(selectedSpeed);
+                    }
                 }
             }
 
