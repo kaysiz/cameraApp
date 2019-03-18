@@ -31,7 +31,8 @@
         <activity
             android:name=".PlayVideoActivity"
             android:configChanges="orientation" />
-        <activity android:name=".VideoPlayerPlaylist" />
+        <activity android:name=".VideoPlayerPlaylist"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".VideoPlayer" />
         <activity android:name=".MainActivity" />
     </application>
