@@ -372,17 +372,17 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         };
         videoController.setMediaPlayer(this);//activity which implemented MediaPlayerControl
         videoController.setAnchorView(textureView);
-        videoController.setEnabled(true);
-        videoController.requestFocus();
-        videoController.setEnabled(true);
-        videoController.show();
-        handler.post(new Runnable() {
-
-            public void run() {
-                videoController.setEnabled(true);
-                videoController.show();
-            }
-        });
+//        videoController.setEnabled(true);
+//        videoController.requestFocus();
+//        videoController.setEnabled(true);
+//        videoController.show();
+//        handler.post(new Runnable() {
+//
+//            public void run() {
+//                videoController.setEnabled(true);
+//                videoController.show();
+//            }
+//        });
     }
 
     private void openVideoPlayList() {
@@ -439,38 +439,49 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
     public float scaler(float point, float middle, float scale) {
         float lambda = 0;
         float portion = 0;
-        
+
         portion = point - middle;
         lambda = portion * scale;
 
-        return portion;
+        //return lambda + middle;
+        return point*scale;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
-        float middleX = 540f;
-        float scaleX = 1.011f;
-        float middleY = 1038f;
-        float scaleY = 1.098f;
+        float middleX = 1038f;
+        //float scaleX = 1.03f;
+        float scaleX = 1.04f;
+        float middleY = 540f;
+        //float scaleY = 1.13f;
+        float scaleY = 1.13f;
         switch (action){
             case MotionEvent.ACTION_DOWN:
-                downx = event.getRawX();
-                downy = event.getRawY();
+                downx = event.getX();
+                downy = event.getY();
 
                 if (isFraming) {
                     if (framing == 0) {
-                        point1x =downx;
-                        point1y =downy;
+                        point1x = scaler(downx,middleX,scaleX);
+                        point1y = scaler(downy,middleY,scaleY);
+                        Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
+                        Log.d("Files", "PointX: " + point1x + " ~ PointY: " + point1y);
                     } else if (framing == 1) {
-                        point2x =downx;
-                        point2y =downy;
+                        point2x = scaler(downx,middleX,scaleX);
+                        point2y = scaler(downy,middleY,scaleY);
+                        Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
+                        Log.d("Files", "PointX: " + point2x + " ~ PointY: " + point2y);
                     }else if (framing == 2) {
-                        point3x =downx;
-                        point3y =downy;
+                        point3x = scaler(downx,middleX,scaleX);
+                        point3y = scaler(downy,middleY,scaleY);
+                        Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
+                        Log.d("Files", "PointX: " + point3x + " ~ PointY: " + point3y);
                     }else if (framing == 3) {
-                        point4x =downx;
-                        point4y =downy;
+                        point4x = scaler(downx,middleX,scaleX);
+                        point4y = scaler(downy,middleY,scaleY);
+                        Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
+                        Log.d("Files", "PointX: " + point4x + " ~ PointY: " + point4y);
 
                         paint.setStrokeWidth(50);
                         paint.setStyle(Paint.Style.FILL);
@@ -485,7 +496,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
                         // before draw clear the screen
                         bitmap.eraseColor(Color.TRANSPARENT);
-                        canvas.drawBitmap(bitmap,v.getLeft(),v.getTop(),paint);
+                        canvas.drawBitmap(bitmap,0,10,paint);
 
                         framing = 0;
                         canvas.drawPath(path, paint);
@@ -508,8 +519,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (drawing) {
-                    upx = event.getRawX();
-                    upy = event.getRawY();
+                    upx = event.getX();
+                    upy = event.getY();
                     canvas.drawLine(downx, downy, upx, upy, paint);
                     imageView.invalidate();
                     downx = upx;
@@ -517,8 +528,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                upx = event.getRawX();
-                upy = event.getRawY();
+                upx = event.getX();
+                upy = event.getY();
                 //canvas.drawLine(downx, downy, upx, upy, paint);
                 if (drawing) {
                     paint.setStrokeWidth(10);
