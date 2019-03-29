@@ -10,8 +10,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.PathShape;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
@@ -19,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -29,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -86,6 +91,18 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
     private float downy = 0;
     private float upx = 0;
     private float upy = 0;
+    private int framing = 0;
+
+    // 4 frame points
+    private float point1x = 0;
+    private float point1y = 0;
+    private float point2x = 0;
+    private float point2y = 0;
+    private float point3x = 0;
+    private float point3y = 0;
+    private float point4x = 0;
+    private float point4y = 0;
+
 
     private MediaPlayer mediaPlayer;
 
@@ -108,8 +125,19 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
     private ImageView imageView;
 
+    private Bitmap bitmap;
+
+    static int i = 0;
+    float x = 200;
+    float y = 200;
+    float x1 = 0;
+    float y1 = 0;
+
     private boolean drawing = false;
 
+    private boolean isFraming = false;
+
+//
 
     @Override
     public void onCreate(Bundle SavedInstanceState) {
@@ -119,13 +147,12 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
         // Draw lines setup
         Point point = new Point();
-        Display curentDispaly = getWindowManager().getDefaultDisplay();
-        curentDispaly.getSize(point);
-        int weidth = point.x;
+        Display currentDisplay = getWindowManager().getDefaultDisplay();
+        currentDisplay.getSize(point);
+        int width = point.x;
         int height = point.y;
 
-
-        Bitmap bitmap = Bitmap.createBitmap(weidth , height, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(height, width, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
         paint.setColor(Color.GREEN);
@@ -134,8 +161,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
         imageView = findViewById(R.id.drawlines);
         imageView.setImageBitmap(bitmap);
-
-//        imageView.setOnTouchListener(this);
+        imageView.setOnTouchListener(this);
 
         textureView = findViewById(R.id.videoView);
         back_button = findViewById(R.id.back_btn);
@@ -166,22 +192,42 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
             public boolean onActionSelected(SpeedDialActionItem speedDialActionItem) {
                 switch (speedDialActionItem.getId()) {
                     case R.id.action_zoom:
-
-                        Toast.makeText(getApplicationContext(), "I am draw", Toast.LENGTH_SHORT).show();
+                        imageView.setOnTouchListener(null);
+                        drawing = false;
+                        isFraming = false;
+                        Toast.makeText(getApplicationContext(), "Zoom mode active, frame and draw mode deactivated", Toast.LENGTH_SHORT).show();
                         return true; // true to keep the Speed Dial open
                     case R.id.action_draw:
                         if (drawing) {
                             imageView.setOnTouchListener(null);
                             drawing = false;
+                            // make the line transparent
                             Toast.makeText(getApplicationContext(), "Drawing mode deactivated!", Toast.LENGTH_SHORT).show();
                         } else {
                             imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
                             drawing = true;
-                            Toast.makeText(getApplicationContext(), "Drawing mode activated, zoom feature deactivated!", Toast.LENGTH_SHORT).show();
+                            isFraming = false;
+                            framing = 0;
+                            paint.setStrokeWidth(10);
+                            Toast.makeText(getApplicationContext(), "Drawing mode activated, zoom and frame feature deactivated!", Toast.LENGTH_SHORT).show();
                         }
                         return false; // true to keep the Speed Dial open
                     case R.id.action_frame:
-                        Toast.makeText(getApplicationContext(), "I am frame", Toast.LENGTH_SHORT).show();
+                        if (isFraming) {
+                            isFraming = false;
+                            // make the line transparent
+                            paint.setAlpha(0);
+                            Toast.makeText(getApplicationContext(), "Frame mode deactivated", Toast.LENGTH_SHORT).show();
+                        } else {
+                            imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
+                            isFraming = true;
+
+                            paint.setStrokeWidth(50);
+                            drawing = false;
+                            // make the line transparent
+                            paint.setAlpha(160);
+                            Toast.makeText(getApplicationContext(), "Frame mode activated, zoom and draw mode deactivated", Toast.LENGTH_SHORT).show();
+                        }
                         return true; // true to keep the Speed Dial open
                     default:
                         return false;
@@ -390,35 +436,102 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         }
     }
 
+    public float scaler(float point, float middle, float scale) {
+        float lambda = 0;
+        float portion = 0;
+        
+        portion = point - middle;
+        lambda = portion * scale;
+
+        return portion;
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
+        float middleX = 540f;
+        float scaleX = 1.011f;
+        float middleY = 1038f;
+        float scaleY = 1.098f;
         switch (action){
             case MotionEvent.ACTION_DOWN:
-                downx = event.getX();
-                downy = event.getY();
+                downx = event.getRawX();
+                downy = event.getRawY();
+
+                if (isFraming) {
+                    if (framing == 0) {
+                        point1x =downx;
+                        point1y =downy;
+                    } else if (framing == 1) {
+                        point2x =downx;
+                        point2y =downy;
+                    }else if (framing == 2) {
+                        point3x =downx;
+                        point3y =downy;
+                    }else if (framing == 3) {
+                        point4x =downx;
+                        point4y =downy;
+
+                        paint.setStrokeWidth(50);
+                        paint.setStyle(Paint.Style.FILL);
+//                        canvas.drawLine(downx, downy, upx, upy, paint);
+                        Path path = new Path();
+
+                        path.moveTo(point1x, point1y);
+                        path.lineTo(point2x, point2y);
+                        path.lineTo(point3x, point3y);
+                        path.lineTo(point4x, point4y);
+                        path.close();
+
+                        // before draw clear the screen
+                        bitmap.eraseColor(Color.TRANSPARENT);
+                        canvas.drawBitmap(bitmap,v.getLeft(),v.getTop(),paint);
+
+                        framing = 0;
+                        canvas.drawPath(path, paint);
+                        // reset the points to zero after drawing the ponts
+                        point1x = 0;
+                        point1y = 0;
+                        point2x = 0;
+                        point2y = 0;
+                        point3x = 0;
+                        point3y = 0;
+                        point4x = 0;
+                        point4y = 0;
+
+                        paint.setStyle(Paint.Style.STROKE);
+                        imageView.invalidate();
+                        break;
+                    }
+                    framing += 1;
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
-                upx = event.getX();
-                upy = event.getY();
-                canvas.drawLine(downx, downy, upx, upy, paint);
-                imageView.invalidate();
-                downx = upx;
-                downy = upy;
+                if (drawing) {
+                    upx = event.getRawX();
+                    upy = event.getRawY();
+                    canvas.drawLine(downx, downy, upx, upy, paint);
+                    imageView.invalidate();
+                    downx = upx;
+                    downy = upy;
+                }
                 break;
             case MotionEvent.ACTION_UP:
-                upx = event.getX();
-                upy = event.getY();
+                upx = event.getRawX();
+                upy = event.getRawY();
                 //canvas.drawLine(downx, downy, upx, upy, paint);
-                canvas.drawLine(downx, downy, upx, upy, paint);
-                imageView.invalidate();
+                if (drawing) {
+                    paint.setStrokeWidth(10);
+                    canvas.drawLine(downx, downy, upx, upy, paint);
+                    imageView.invalidate();
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
             default:
                 break;
-
         }
         return true;
     }
+
 }
