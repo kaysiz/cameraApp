@@ -135,7 +135,11 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
     private boolean drawing = false;
 
-    private boolean isFraming = false;
+    private boolean isLBW = false;
+
+    private boolean isRunout = false;
+
+    private int runout = 0;
 
 //
 
@@ -194,7 +198,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                     case R.id.action_zoom:
                         imageView.setOnTouchListener(null);
                         drawing = false;
-                        isFraming = false;
+                        isLBW = false;
                         Toast.makeText(getApplicationContext(), "Zoom mode active, frame and draw mode deactivated", Toast.LENGTH_SHORT).show();
                         return false; // true to keep the Speed Dial open
                     case R.id.action_draw:
@@ -206,27 +210,47 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         } else {
                             imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
                             drawing = true;
-                            isFraming = false;
+                            isLBW = false;
                             framing = 0;
                             paint.setStrokeWidth(10);
                             Toast.makeText(getApplicationContext(), "Drawing mode activated, zoom and frame feature deactivated!", Toast.LENGTH_SHORT).show();
                         }
                         return false; // true to keep the Speed Dial open
-                    case R.id.action_frame:
-                        if (isFraming) {
-                            isFraming = false;
+                    case R.id.action_lbw:
+                        if (isLBW) {
+                            isLBW = false;
                             // make the line transparent
                             paint.setAlpha(0);
-                            Toast.makeText(getApplicationContext(), "Frame mode deactivated", Toast.LENGTH_SHORT).show();
+                            framing = 0;
+                            Toast.makeText(getApplicationContext(), "LBW mode deactivated", Toast.LENGTH_SHORT).show();
                         } else {
                             imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
-                            isFraming = true;
+                            isLBW = true;
 
                             paint.setStrokeWidth(50);
                             drawing = false;
                             // make the line transparent
                             paint.setAlpha(160);
-                            Toast.makeText(getApplicationContext(), "Frame mode activated, zoom and draw mode deactivated", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "LBW mode activated, zoom, runout and draw mode deactivated", Toast.LENGTH_SHORT).show();
+                        }
+                        return false; // true to keep the Speed Dial open
+                    case R.id.action_runout:
+                        if (isRunout) {
+                            isRunout = false;
+                            // make the line transparent
+                            runout = 0;
+                            paint.setAlpha(0);
+                            Toast.makeText(getApplicationContext(), "Runout mode deactivated", Toast.LENGTH_SHORT).show();
+                        } else {
+                            imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
+                            isRunout = true;
+
+                            paint.setStrokeWidth(30);
+                            isLBW = false;
+                            drawing = false;
+                            // make the line transparent
+                            paint.setAlpha(160);
+                            Toast.makeText(getApplicationContext(), "Runout mode activated, zoom, LBW and draw mode deactivated", Toast.LENGTH_SHORT).show();
                         }
                         return false; // true to keep the Speed Dial open
                     default:
@@ -372,10 +396,10 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         };
         videoController.setMediaPlayer(this);//activity which implemented MediaPlayerControl
         videoController.setAnchorView(textureView);
+        videoController.setEnabled(true);
+        videoController.requestFocus();
 //        videoController.setEnabled(true);
-//        videoController.requestFocus();
-//        videoController.setEnabled(true);
-//        videoController.show();
+        videoController.show();
 //        handler.post(new Runnable() {
 //
 //            public void run() {
@@ -488,7 +512,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 downx = event.getX();
                 downy = event.getY();
 
-                if (isFraming) {
+                if (isLBW) {
                     if (framing == 0) {
                         point1x = scaler(downx,scaleX);
                         //point1y = pusher(downy,height/2,scaleY);
@@ -516,7 +540,6 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
                         paint.setStrokeWidth(50);
                         paint.setStyle(Paint.Style.FILL);
-//                        canvas.drawLine(downx, downy, upx, upy, paint);
                         Path path = new Path();
 
                         path.moveTo(point1x, point1y);
@@ -546,6 +569,14 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         break;
                     }
                     framing += 1;
+                } else if (isRunout) {
+                    if (runout == 1) {
+                        canvas.drawLine(downx, downy, upx, upy, paint);
+                        imageView.invalidate();
+                        runout = 0;
+                    } else {
+                        runout++;
+                    }
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -561,7 +592,6 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
             case MotionEvent.ACTION_UP:
                 upx = event.getX();
                 upy = event.getY();
-                //canvas.drawLine(downx, downy, upx, upy, paint);
                 if (drawing) {
                     paint.setStrokeWidth(10);
                     canvas.drawLine(downx, downy, upx, upy, paint);

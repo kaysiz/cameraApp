@@ -17,10 +17,16 @@
         android:title="Draw mode"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/action_frame"
+        android:id="@+id/action_lbw"
         android:icon="@drawable/ic_action_zoom"
         android:orderInCategory="100"
-        android:title="Frame mode"
+        android:title="LBW mode"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_runout"
+        android:icon="@drawable/ic_action_zoom"
+        android:orderInCategory="100"
+        android:title="Run-out mode"
         app:showAsAction="always" />
 
 </menu>
