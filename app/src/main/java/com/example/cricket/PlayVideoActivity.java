@@ -471,8 +471,16 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         //float scaleY = height/(height-75);
 
         // Perfect for Pixel 2 when using scaler
-        float scaleX = width/(width-100);
-        float scaleY = height/(height-180);
+        //float scaleX = width/(width-100);
+        //float scaleY = height/(height-180);
+
+        // Huawei P8 Lite 2017
+        //float scaleX = width/(width-100);
+        //float scaleY = height/(height-180);
+
+        // Samsung S8
+        float scaleX = width/(width-50);
+        float scaleY = height/(height-75);
 
 
         switch (action){
