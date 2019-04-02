@@ -372,17 +372,17 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         };
         videoController.setMediaPlayer(this);//activity which implemented MediaPlayerControl
         videoController.setAnchorView(textureView);
-        videoController.setEnabled(true);
-        videoController.requestFocus();
-        videoController.setEnabled(true);
-        videoController.show();
-        handler.post(new Runnable() {
-
-            public void run() {
-                videoController.setEnabled(true);
-                videoController.show();
-            }
-        });
+//        videoController.setEnabled(true);
+//        videoController.requestFocus();
+//        videoController.setEnabled(true);
+//        videoController.show();
+//        handler.post(new Runnable() {
+//
+//            public void run() {
+//                videoController.setEnabled(true);
+//                videoController.show();
+//            }
+//        });
     }
 
     private void openVideoPlayList() {
@@ -550,8 +550,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (drawing) {
-                    upx = event.getRawX();
-                    upy = event.getRawY();
+                    upx = event.getX();
+                    upy = event.getY();
                     canvas.drawLine(downx, downy, upx, upy, paint);
                     imageView.invalidate();
                     downx = upx;
@@ -559,8 +559,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                upx = event.getRawX();
-                upy = event.getRawY();
+                upx = event.getX();
+                upy = event.getY();
                 //canvas.drawLine(downx, downy, upx, upy, paint);
                 if (drawing) {
                     paint.setStrokeWidth(10);
