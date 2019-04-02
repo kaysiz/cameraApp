@@ -152,7 +152,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         int width = point.x;
         int height = point.y;
 
-        bitmap = Bitmap.createBitmap(height, width, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
         paint.setColor(Color.GREEN);
@@ -196,7 +196,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         drawing = false;
                         isFraming = false;
                         Toast.makeText(getApplicationContext(), "Zoom mode active, frame and draw mode deactivated", Toast.LENGTH_SHORT).show();
-                        return true; // true to keep the Speed Dial open
+                        return false; // true to keep the Speed Dial open
                     case R.id.action_draw:
                         if (drawing) {
                             imageView.setOnTouchListener(null);
@@ -228,7 +228,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                             paint.setAlpha(160);
                             Toast.makeText(getApplicationContext(), "Frame mode activated, zoom and draw mode deactivated", Toast.LENGTH_SHORT).show();
                         }
-                        return true; // true to keep the Speed Dial open
+                        return false; // true to keep the Speed Dial open
                     default:
                         return false;
                 }
@@ -436,26 +436,53 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         }
     }
 
-    public float scaler(float point, float middle, float scale) {
+    public float scaler(float point, float scale) {
+        return point*scale;
+    }
+
+    public float pusher(float point, float middle, float scale) {
         float lambda = 0;
         float portion = 0;
 
         portion = point - middle;
         lambda = portion * scale;
 
-        //return lambda + middle;
-        return point*scale;
+        return middle + lambda;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
-        float middleX = 1038f;
-        //float scaleX = 1.03f;
-        float scaleX = 1.04f;
-        float middleY = 540f;
-        //float scaleY = 1.13f;
-        float scaleY = 1.13f;
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float width = size.x;
+        float height = size.y;
+        Log.e("Width", "" + width);
+        Log.e("height", "" + height);
+
+        // Perfect for Nexus 5 when using scaler
+        //float scaleX = width/(width-50);
+        //float scaleY = height/(height-200);
+
+        // Perfect for Nexus S - when using scaler
+        //float scaleX = width/(width-50);
+        //float scaleY = height/(height-75);
+
+        // Perfect for Pixel 2 when using scaler
+        //float scaleX = width/(width-100);
+        //float scaleY = height/(height-180);
+
+        // Huawei P8 Lite 2017
+        //float scaleX = width/(width-100);
+        //float scaleY = height/(height-180);
+
+        // Samsung S8
+        float scaleX = width/(width-50);
+        float scaleY = height/(height-75);
+
+
         switch (action){
             case MotionEvent.ACTION_DOWN:
                 downx = event.getX();
@@ -463,23 +490,27 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
                 if (isFraming) {
                     if (framing == 0) {
-                        point1x = scaler(downx,middleX,scaleX);
-                        point1y = scaler(downy,middleY,scaleY);
+                        point1x = scaler(downx,scaleX);
+                        //point1y = pusher(downy,height/2,scaleY);
+                        point1y = scaler(downy,scaleY);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point1x + " ~ PointY: " + point1y);
                     } else if (framing == 1) {
-                        point2x = scaler(downx,middleX,scaleX);
-                        point2y = scaler(downy,middleY,scaleY);
+                        point2x = scaler(downx,scaleX);
+                        //point2y = pusher(downy,height/2,scaleY);
+                        point2y = scaler(downy,scaleY);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point2x + " ~ PointY: " + point2y);
                     }else if (framing == 2) {
-                        point3x = scaler(downx,middleX,scaleX);
-                        point3y = scaler(downy,middleY,scaleY);
+                        point3x = scaler(downx,scaleX);
+                        //point3y = pusher(downy,height/2,scaleY);
+                        point3y = scaler(downy,scaleY);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point3x + " ~ PointY: " + point3y);
                     }else if (framing == 3) {
-                        point4x = scaler(downx,middleX,scaleX);
-                        point4y = scaler(downy,middleY,scaleY);
+                        point4x = scaler(downx,scaleX);
+                        //point4y = pusher(downy,height/2,scaleY);
+                        point4y = scaler(downy,scaleY);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point4x + " ~ PointY: " + point4y);
 
@@ -496,7 +527,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
                         // before draw clear the screen
                         bitmap.eraseColor(Color.TRANSPARENT);
-                        canvas.drawBitmap(bitmap,0,10,paint);
+                        canvas.drawBitmap(bitmap,0,0,paint);
 
                         framing = 0;
                         canvas.drawPath(path, paint);
