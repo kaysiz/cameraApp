@@ -2,17 +2,26 @@ package com.example.cricket;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 public class MenuActivity extends AppCompatActivity {
 
     private RelativeLayout record_button;
     private RelativeLayout last_play_button;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +75,19 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void openGalleryActivity() {
-        Intent intent = new Intent(this, VideoPlayerPlaylist.class);
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(this, VideoPlayerPlaylist.class);
+                startActivity(intent);
+            } else {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(this, "app needs to be able to save videos", Toast.LENGTH_SHORT).show();
+                }
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT);
+            }
+        } else {
+            Intent intent = new Intent(this, VideoPlayerPlaylist.class);
+            startActivity(intent);
+        }
     }
 }

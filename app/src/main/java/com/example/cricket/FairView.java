@@ -2,6 +2,7 @@ package com.example.cricket;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.hardware.usb.UsbDevice;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
@@ -34,7 +36,6 @@ import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.common.AbstractUVCCameraHandler;
 import com.serenegiant.usb.encoder.RecordParams;
 import com.serenegiant.usb.widget.CameraViewInterface;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -125,6 +126,9 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         public void onDisConnectDev(UsbDevice device) {
 
             showShortMsg("disconnecting");
+            if (isRecording) {
+                stopRecording();
+            }
         }
     };
 
@@ -149,6 +153,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 openVideoPlayer();
             }
         });
+
 
         // step.1 initialize UVCCameraHelper
         mUVCCameraView = (CameraViewInterface) mTextureView;
@@ -279,7 +284,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
 
     private void createVideoFolder() {
         File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        mVideoFolder = new File(movieFile, getString(R.string.app_name));
+        mVideoFolder = new File(movieFile, getString(R.string.app_name) + "/raw");
         if (!mVideoFolder.exists()) {
             mVideoFolder.mkdirs();
         }
@@ -307,7 +312,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         @Override
         public void run() {
             if (!mCameraHelper.isPushing()) {
-                String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/" + System.currentTimeMillis();
+                String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/raw/" + System.currentTimeMillis();
                 mButton.setEnabled(false);
                 isRecording = true;
                 mRecordImageButton.setImageResource(R.mipmap.btn_video_busy);
@@ -335,7 +340,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
                 });
                 // if you only want to push stream,please call like this
                 // mCameraHelper.startPusher(listener);
-                clean_up();
+                // clean_up();
                 showShortMsg("start recording...");
 
                 // Tell MediaStore of the new file
@@ -428,6 +433,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
             long file_time = files[i].lastModified();
             if (file_time < longAgo) {
                 files[i].delete();
+                MediaScannerConnection.scanFile(this, new String[] { files.toString() }, null, null);
             }
         }
     }

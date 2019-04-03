@@ -13,6 +13,8 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -411,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createVideoFolder() {
         File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        mVideoFolder = new File(movieFile, getString(R.string.app_name));
+        mVideoFolder = new File(movieFile, getString(R.string.app_name) + "/raw");
         if (!mVideoFolder.exists()) {
             mVideoFolder.mkdirs();
         }
@@ -421,7 +423,12 @@ public class MainActivity extends AppCompatActivity {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmSS").format(new Date());
         String prepend = "VIDEO_" + timestamp + "_";
         File videoFile = File.createTempFile(prepend, ".mp4", mVideoFolder);
+
         mVideoFileName = videoFile.getAbsolutePath();
+        MediaScannerConnection.scanFile(this, new String[] { mVideoFileName }, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                    }});
         return videoFile;
 
     }
@@ -462,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
             mChronometer.start();
         }
     }
+
     private void setupMediaRecorder() throws IOException {
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
