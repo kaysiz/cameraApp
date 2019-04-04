@@ -154,7 +154,6 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
             }
         });
 
-
         // step.1 initialize UVCCameraHelper
         mUVCCameraView = (CameraViewInterface) mTextureView;
         mUVCCameraView.setCallback(this);
