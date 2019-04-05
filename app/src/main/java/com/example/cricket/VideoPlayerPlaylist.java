@@ -33,7 +33,6 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
         /////
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         init();
