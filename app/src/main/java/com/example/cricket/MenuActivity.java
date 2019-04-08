@@ -21,6 +21,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private RelativeLayout record_button;
     private RelativeLayout last_play_button;
+    private RelativeLayout saved_play_button;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT = 1;
 
     @Override
@@ -30,6 +31,8 @@ public class MenuActivity extends AppCompatActivity {
 
         record_button = findViewById(R.id.rl_menu_record);
         last_play_button = findViewById(R.id.rl_menu_review);
+        saved_play_button = findViewById(R.id.rl_menu_gallery);
+
         record_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +65,13 @@ public class MenuActivity extends AppCompatActivity {
                 openGalleryActivity();
             }
         });
+
+        saved_play_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSavedGalleryActivity();
+            }
+        });
     }
 
     public void openUSBCameraActivity() {
@@ -87,6 +97,23 @@ public class MenuActivity extends AppCompatActivity {
             }
         } else {
             Intent intent = new Intent(this, VideoPlayerPlaylist.class);
+            startActivity(intent);
+        }
+    }
+
+    public void openSavedGalleryActivity() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(this, SavedPlaylist.class);
+                startActivity(intent);
+            } else {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(this, "app needs to be able to save videos", Toast.LENGTH_SHORT).show();
+                }
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT);
+            }
+        } else {
+            Intent intent = new Intent(this, SavedPlaylist.class);
             startActivity(intent);
         }
     }

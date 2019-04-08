@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
@@ -381,11 +382,24 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         return mediaPlayer.getAudioSessionId();
     }
 
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // write your code here
+            Log.e("Back", "it works");
+        }
+        return true;    }
+
     @Override
     public void onBackPressed() {
-        finish();
-        Intent intent = new Intent(PlayVideoActivity.this,VideoPlayerPlaylist.class);
-        startActivity(intent);
+        super.onBackPressed();
+//        Intent intent = new Intent(this,VideoPlayerPlaylist.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////        startActivity(intent);
+//        finish();
+//        Toast.makeText(this, "app needs to be able to save videos", Toast.LENGTH_SHORT).show();
     }
 
     private void mMediaControllerEnable(){
@@ -400,13 +414,13 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         videoController.requestFocus();
 //        videoController.setEnabled(true);
         videoController.show();
-//        handler.post(new Runnable() {
-//
-//            public void run() {
-//                videoController.setEnabled(true);
-//                videoController.show();
-//            }
-//        });
+        handler.post(new Runnable() {
+
+            public void run() {
+                videoController.setEnabled(true);
+                videoController.show();
+            }
+        });
     }
 
     private void openVideoPlayList() {

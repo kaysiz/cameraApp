@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.media.MediaScannerConnection;
@@ -22,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.cricket.Model.VideoModel;
 import com.example.cricket.PlayVideoActivity;
 import com.example.cricket.R;
+import com.example.cricket.VideoPlayerPlaylist;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +39,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     Context context;
     ArrayList<VideoModel> arrayListVideos;
     Activity activity;
-    String [] toDelete;
+
     public VideoAdapter(Context context, ArrayList<VideoModel> arrayListVideos, Activity activity) {
 
         this.context = context;
@@ -71,14 +73,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
         holder.r1_select.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getRootView().getContext());
                 builder.setTitle(R.string.app_name);
-                builder.setMessage("Default camera is USB, use front camera?");
+                builder.setMessage("Save video?");
                 builder.setIcon(R.drawable.exo_icon_next);
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
                         save_video(arrayListVideos.get(position).getStr_path());
+                        dialog.dismiss();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

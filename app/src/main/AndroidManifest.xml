@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cricket">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,37 +17,48 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".ExoVPlayer"></activity>
+        <activity
+            android:name=".SavedPlaylist"
+            android:configChanges="orientation|keyboardHidden"
+            android:parentActivityName=".MenuActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ExoVPlayer" />
         <activity
             android:name=".MenuActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".HomeActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HomeActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FairView"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
+        <activity
+            android:name=".FairView"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PlayVideoActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
-        <activity android:name=".VideoPlayerPlaylist"
             android:parentActivityName=".MenuActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".VideoPlayer"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VideoPlayerPlaylist"
+            android:configChanges="orientation|keyboardHidden"
+            android:parentActivityName=".MenuActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VideoPlayer"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -480,7 +480,7 @@ public class MainActivity extends AppCompatActivity {
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mMediaRecorder.setAudioEncoder(MediaRecorder.getAudioSourceMax());
+//        mMediaRecorder.setAudioEncoder(MediaRecorder.getAudioSourceMax());
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mMediaRecorder.setAudioEncodingBitRate(16);
         mMediaRecorder.setOrientationHint(mTotalRotation);

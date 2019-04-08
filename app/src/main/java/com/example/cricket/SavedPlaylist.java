@@ -1,23 +1,24 @@
 package com.example.cricket;
 
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Handler;
-import android.provider.MediaStore;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 
-import androidx.appcompat.widget.Toolbar;
 import com.example.cricket.Adapter.VideoAdapter;
 import com.example.cricket.Model.VideoModel;
 
 import java.util.ArrayList;
 
-public class VideoPlayerPlaylist extends AppCompatActivity {
+public class SavedPlaylist extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager recyclerviewLayoutManager;
@@ -28,10 +29,10 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_player_playlist);
+        setContentView(R.layout.activity_saved_playlist);
 
         /////
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -68,7 +69,7 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
     }
 
     private void init() {
-        recyclerView = findViewById(R.id.videoplayerplaylist);
+        recyclerView = findViewById(R.id.savedplaylist);
         recyclerviewLayoutManager = new GridLayoutManager(getApplicationContext(),2);
         recyclerView.setLayoutManager(recyclerviewLayoutManager);
         arrayListVideos = null;
@@ -86,13 +87,13 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
 
         uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.MediaColumns.DATA,
-                                MediaStore.Video.Media.BUCKET_DISPLAY_NAME,
-                                MediaStore.Video.Media._ID,
-                                MediaStore.Video.Thumbnails.DATA };
+                MediaStore.Video.Media.BUCKET_DISPLAY_NAME,
+                MediaStore.Video.Media._ID,
+                MediaStore.Video.Thumbnails.DATA };
 
         String orderby = MediaStore.Images.Media.DATE_TAKEN;
 
-         cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{"%Cricket/raw%"},orderby);
+        cursor = getApplicationContext().getContentResolver().query(uri,projection,MediaStore.Video.Media.DATA +" like ?", new String[]{"%Cricket/saved%"},orderby);
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
@@ -113,7 +114,7 @@ public class VideoPlayerPlaylist extends AppCompatActivity {
             arrayListVideos.add(videoModel);
         }
 
-        VideoAdapter videoAdapter = new VideoAdapter(getApplicationContext(), arrayListVideos, VideoPlayerPlaylist.this);
+        VideoAdapter videoAdapter = new VideoAdapter(getApplicationContext(), arrayListVideos, SavedPlaylist.this);
         recyclerView.setAdapter(videoAdapter);
 
     }
