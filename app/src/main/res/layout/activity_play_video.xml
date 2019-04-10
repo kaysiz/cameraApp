@@ -11,13 +11,29 @@
     android:paddingTop="16sp"
     tools:context=".PlayVideoActivity">
 
-    <ua.polohalo.zoomabletextureview.ZoomableTextureView
-        android:id="@+id/videoView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        app:maxScale="6" />
+    <FrameLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="480sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:foregroundGravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ua.polohalo.zoomabletextureview.ZoomableTextureView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            app:maxScale="4"/>
+    </FrameLayout>
+
 
     <ImageView
         android:id="@+id/drawlines"
@@ -26,7 +42,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true" />
 
-    <!--<androidx.cardview.widget.CardView-->
+        <!--<androidx.cardview.widget.CardView-->
         <!--android:layout_width="380dp"-->
         <!--android:layout_height="wrap_content"-->
 
@@ -45,23 +61,23 @@
         <!--tools:layout_editor_absoluteX="48dp"-->
         <!--tools:layout_editor_absoluteY="16dp" -->
 
-    <!--</androidx.cardview.widget.CardView>-->
+        <!--</androidx.cardview.widget.CardView>-->
 
-    <Spinner
-        android:id="@+id/speedOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/GRAY"
-        android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.976"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <Spinner
+            android:id="@+id/speedOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/GRAY"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.976"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
         android:id="@+id/back_btn"
@@ -69,8 +85,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="76dp"
-        android:layout_marginBottom="120dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="48dp"
         android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -81,8 +97,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="76dp"
-        android:layout_marginBottom="120dp"
+        android:layout_marginEnd="136dp"
+        android:layout_marginBottom="56dp"
         android:text="Clear"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -92,9 +108,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        app:sdMainFabClosedSrc="@drawable/star"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
-
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:sdMainFabClosedSrc="@drawable/star" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

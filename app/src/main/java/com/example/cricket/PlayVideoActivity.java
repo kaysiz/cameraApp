@@ -277,6 +277,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                     int vwidth = mediaPlayer.getVideoWidth();
                     int vheight = mediaPlayer.getVideoHeight();
                     mediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+                    textureView.getLayoutParams().width = vwidth;
+                    textureView.getLayoutParams().height = vheight;
                     mediaplayer.start();
                     mMediaControllerEnable();
                 }
@@ -394,12 +396,6 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        Intent intent = new Intent(this,VideoPlayerPlaylist.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////        startActivity(intent);
-//        finish();
-//        Toast.makeText(this, "app needs to be able to save videos", Toast.LENGTH_SHORT).show();
     }
 
     private void mMediaControllerEnable(){
