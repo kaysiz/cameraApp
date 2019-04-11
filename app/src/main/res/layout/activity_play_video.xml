@@ -31,7 +31,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            app:maxScale="4"/>
+            app:maxScale="6"/>
     </FrameLayout>
 
 
@@ -40,28 +40,75 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="140dp" />
 
-        <!--<androidx.cardview.widget.CardView-->
-        <!--android:layout_width="380dp"-->
-        <!--android:layout_height="wrap_content"-->
+    <ImageView
+        android:id="@+id/img_1"
+        android:layout_width="56dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_brightness_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.179"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.359"
+        android:visibility="invisible"/>
 
-        <!--android:layout_marginStart="16dp"-->
-        <!--android:layout_marginEnd="16dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent">-->
+    <ImageView
+        android:id="@+id/img_2"
+        android:layout_width="56dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_brightness_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"/>
 
+    <ImageView
+        android:id="@+id/img_3"
+        android:layout_width="56dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_brightness_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.907"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.737"
+        android:visibility="invisible"/>
 
-        <!--android:layout_alignTop="@+id/videoView"-->
-        <!--android:layout_alignEnd="@+id/videoView"-->
-        <!--android:layout_marginTop="-8dp"-->
-        <!--android:layout_marginEnd="0dp"-->
-        <!--tools:layout_editor_absoluteX="48dp"-->
-        <!--tools:layout_editor_absoluteY="16dp" -->
-
-        <!--</androidx.cardview.widget.CardView>-->
+    <ImageView
+        android:id="@+id/img_4"
+        android:layout_width="56dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_brightness_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.182"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.68"
+        android:visibility="invisible"/>
 
         <Spinner
             android:id="@+id/speedOptions"
@@ -113,5 +160,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:sdMainFabClosedSrc="@drawable/star" />
+
+    <Button
+        android:id="@+id/join"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="21dp"
+        android:text="Join"
+        app:layout_constraintStart_toEndOf="@+id/button4"
+        tools:layout_editor_absoluteY="606dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

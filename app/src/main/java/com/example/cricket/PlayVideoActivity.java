@@ -104,6 +104,11 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
     private float point4x = 0;
     private float point4y = 0;
 
+    private float xCoOrdinate1, yCoOrdinate1;
+    private float xCoOrdinate2, yCoOrdinate2;
+    private float xCoOrdinate3, yCoOrdinate3;
+    private float xCoOrdinate4, yCoOrdinate4;
+
 
     private MediaPlayer mediaPlayer;
 
@@ -120,6 +125,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
     private Button clr_button;
 
+    private Button join_btn;
+
     private Canvas canvas;
 
     private Paint paint;
@@ -133,6 +140,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
     float y = 200;
     float x1 = 0;
     float y1 = 0;
+    private int vwidth;
+    private int vheight;
 
     private boolean drawing = false;
 
@@ -142,7 +151,11 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
     private int runout = 0;
 
-//
+    // LBW resizable shape
+    private ImageView img_1;
+    private ImageView img_2;
+    private ImageView img_3;
+    private ImageView img_4;
 
     @Override
     public void onCreate(Bundle SavedInstanceState) {
@@ -168,6 +181,116 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         imageView.setImageBitmap(bitmap);
         imageView.setOnTouchListener(this);
 
+        // LBW images
+        img_1 = findViewById(R.id.img_1);
+        img_2 = findViewById(R.id.img_2);
+        img_3 = findViewById(R.id.img_3);
+        img_4 = findViewById(R.id.img_4);
+
+        img_1.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        xCoOrdinate1 = view.getX() - event.getRawX();
+                        yCoOrdinate1 = view.getY() - event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        view.animate().x(event.getRawX() + xCoOrdinate1).y(event.getRawY() + yCoOrdinate1).setDuration(0).start();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        clr_button.callOnClick();
+                        img_1.setVisibility(View.VISIBLE);
+                        img_2.setVisibility(View.VISIBLE);
+                        img_3.setVisibility(View.VISIBLE);
+                        img_4.setVisibility(View.VISIBLE);
+                        join_btn.callOnClick();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+
+        img_2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        xCoOrdinate2 = view.getX() - event.getRawX();
+                        yCoOrdinate2 = view.getY() - event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        view.animate().x(event.getRawX() + xCoOrdinate2).y(event.getRawY() + yCoOrdinate2).setDuration(0).start();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        clr_button.callOnClick();
+                        img_1.setVisibility(View.VISIBLE);
+                        img_2.setVisibility(View.VISIBLE);
+                        img_3.setVisibility(View.VISIBLE);
+                        img_4.setVisibility(View.VISIBLE);
+                        join_btn.callOnClick();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+
+        img_3.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        xCoOrdinate3 = view.getX() - event.getRawX();
+                        yCoOrdinate3 = view.getY() - event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        view.animate().x(event.getRawX() + xCoOrdinate3).y(event.getRawY() + yCoOrdinate3).setDuration(0).start();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        clr_button.callOnClick();
+                        img_1.setVisibility(View.VISIBLE);
+                        img_2.setVisibility(View.VISIBLE);
+                        img_3.setVisibility(View.VISIBLE);
+                        img_4.setVisibility(View.VISIBLE);
+                        join_btn.callOnClick();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+
+
+        img_4.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        xCoOrdinate4 = view.getX() - event.getRawX();
+                        yCoOrdinate4 = view.getY() - event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        view.animate().x(event.getRawX() + xCoOrdinate4).y(event.getRawY() + yCoOrdinate4).setDuration(0).start();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        clr_button.callOnClick();
+                        img_1.setVisibility(View.VISIBLE);
+                        img_2.setVisibility(View.VISIBLE);
+                        img_3.setVisibility(View.VISIBLE);
+                        img_4.setVisibility(View.VISIBLE);
+                        join_btn.callOnClick();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
         textureView = findViewById(R.id.videoView);
         back_button = findViewById(R.id.back_btn);
         textureView.setSurfaceTextureListener(this);
@@ -184,10 +307,37 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         clr_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                img_1.setVisibility(View.INVISIBLE);
+                img_2.setVisibility(View.INVISIBLE);
+                img_3.setVisibility(View.INVISIBLE);
+                img_4.setVisibility(View.INVISIBLE);
                 bitmap.eraseColor(Color.TRANSPARENT);
                 canvas.drawBitmap(bitmap,0,0,paint);
             }
         });
+
+        join_btn = findViewById(R.id.join);
+        join_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paint.setStrokeWidth(50);
+                paint.setStyle(Paint.Style.FILL);
+                Path path = new Path();
+                path.moveTo(img_1.getX() + (img_1.getWidth() / 2), img_1.getY() + (img_1.getHeight() / 2));
+                path.lineTo(img_2.getX() + (img_2.getWidth() / 2), img_2.getY() + (img_2.getHeight() / 2));
+                path.lineTo(img_3.getX() + (img_3.getWidth() / 2), img_3.getY() + (img_3.getHeight() / 2));
+                path.lineTo(img_4.getX() + (img_4.getWidth() / 2), img_4.getY() + (img_4.getHeight() / 2));
+                path.close();
+
+                // before draw clear the screen
+                bitmap.eraseColor(Color.TRANSPARENT);
+                canvas.drawBitmap(bitmap,0,0,paint);
+
+                framing = 0;
+                canvas.drawPath(path, paint);
+            }
+        });
+
         setSpeedOptions();
         // Action button for different modes
         SpeedDialView speedDialView = findViewById(R.id.speedDial);
@@ -261,6 +411,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
         });
     }
 
+
+
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
         Surface surface = new Surface(surfaceTexture);
@@ -274,8 +426,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaplayer) {
-                    int vwidth = mediaPlayer.getVideoWidth();
-                    int vheight = mediaPlayer.getVideoHeight();
+                    vwidth = mediaPlayer.getVideoWidth();
+                    vheight = mediaPlayer.getVideoHeight();
                     mediaPlayer.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
                     textureView.getLayoutParams().width = vwidth;
                     textureView.getLayoutParams().height = vheight;
@@ -527,24 +679,36 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         point1x = scaler(downx,scaleX);
                         //point1y = pusher(downy,height/2,scaleY);
                         point1y = scaler(downy,scaleY);
+                        img_1.setX(downx + (img_1.getWidth() / 2));
+                        img_1.setY(downy + (img_1.getWidth() / 2));
+                        img_1.setVisibility(View.VISIBLE);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point1x + " ~ PointY: " + point1y);
                     } else if (framing == 1) {
                         point2x = scaler(downx,scaleX);
                         //point2y = pusher(downy,height/2,scaleY);
                         point2y = scaler(downy,scaleY);
+                        img_2.setX(point2y);
+                        img_2.setY(point2y);
+                        img_2.setVisibility(View.VISIBLE);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point2x + " ~ PointY: " + point2y);
                     }else if (framing == 2) {
                         point3x = scaler(downx,scaleX);
                         //point3y = pusher(downy,height/2,scaleY);
                         point3y = scaler(downy,scaleY);
+                        img_3.setX(point3x);
+                        img_3.setY(point3y);
+                        img_3.setVisibility(View.VISIBLE);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point3x + " ~ PointY: " + point3y);
                     }else if (framing == 3) {
                         point4x = scaler(downx,scaleX);
                         //point4y = pusher(downy,height/2,scaleY);
                         point4y = scaler(downy,scaleY);
+                        img_4.setX(point4x);
+                        img_4.setY(point4y);
+                        img_4.setVisibility(View.VISIBLE);
                         Log.d("Files", "PathX: " + downx + " ~ PathY: " + downy);
                         Log.d("Files", "PointX: " + point4x + " ~ PointY: " + point4y);
 
@@ -564,7 +728,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
                         framing = 0;
                         canvas.drawPath(path, paint);
-                        // reset the points to zero after drawing the ponts
+//                        Toast.makeText(getApplicationContext(), "LBW mode deactivated, you can resize the diagram", Toast.LENGTH_SHORT).show();
+                        // reset the points to zero after drawing the points
                         point1x = 0;
                         point1y = 0;
                         point2x = 0;
@@ -582,6 +747,12 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 } else if (isRunout) {
                     if (runout == 1) {
                         canvas.drawLine(downx, downy, upx, upy, paint);
+                        img_1.setX(downx + (img_1.getWidth() / 2));
+                        img_1.setY(downy + (img_1.getWidth() / 2));
+                        img_1.setVisibility(View.VISIBLE);
+                        img_2.setX(downx + (img_1.getWidth() / 2));
+                        img_2.setY(downy + (img_1.getWidth() / 2));
+                        img_2.setVisibility(View.VISIBLE);
                         imageView.invalidate();
                         runout = 0;
                     } else {
