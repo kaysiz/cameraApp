@@ -200,10 +200,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         break;
                     case MotionEvent.ACTION_UP:
                         clr_button.callOnClick();
-                        img_1.setVisibility(View.VISIBLE);
-                        img_2.setVisibility(View.VISIBLE);
-                        img_3.setVisibility(View.VISIBLE);
-                        img_4.setVisibility(View.VISIBLE);
+                        show_buttons();
                         join_btn.callOnClick();
                         break;
                     default:
@@ -226,10 +223,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         break;
                     case MotionEvent.ACTION_UP:
                         clr_button.callOnClick();
-                        img_1.setVisibility(View.VISIBLE);
-                        img_2.setVisibility(View.VISIBLE);
-                        img_3.setVisibility(View.VISIBLE);
-                        img_4.setVisibility(View.VISIBLE);
+                        show_buttons();
                         join_btn.callOnClick();
                         break;
                     default:
@@ -252,10 +246,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         break;
                     case MotionEvent.ACTION_UP:
                         clr_button.callOnClick();
-                        img_1.setVisibility(View.VISIBLE);
-                        img_2.setVisibility(View.VISIBLE);
-                        img_3.setVisibility(View.VISIBLE);
-                        img_4.setVisibility(View.VISIBLE);
+                        show_buttons();
                         join_btn.callOnClick();
                         break;
                     default:
@@ -279,10 +270,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         break;
                     case MotionEvent.ACTION_UP:
                         clr_button.callOnClick();
-                        img_1.setVisibility(View.VISIBLE);
-                        img_2.setVisibility(View.VISIBLE);
-                        img_3.setVisibility(View.VISIBLE);
-                        img_4.setVisibility(View.VISIBLE);
+                        show_buttons();
                         join_btn.callOnClick();
                         break;
                     default:
@@ -747,12 +735,6 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 } else if (isRunout) {
                     if (runout == 1) {
                         canvas.drawLine(downx, downy, upx, upy, paint);
-                        img_1.setX(downx + (img_1.getWidth() / 2));
-                        img_1.setY(downy + (img_1.getWidth() / 2));
-                        img_1.setVisibility(View.VISIBLE);
-                        img_2.setX(downx + (img_1.getWidth() / 2));
-                        img_2.setY(downy + (img_1.getWidth() / 2));
-                        img_2.setVisibility(View.VISIBLE);
                         imageView.invalidate();
                         runout = 0;
                     } else {
@@ -785,6 +767,13 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                 break;
         }
         return true;
+    }
+
+    public void show_buttons() {
+        img_1.setVisibility(View.VISIBLE);
+        img_2.setVisibility(View.VISIBLE);
+        img_3.setVisibility(View.VISIBLE);
+        img_4.setVisibility(View.VISIBLE);
     }
 
 }
