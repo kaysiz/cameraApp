@@ -14,7 +14,7 @@
         <com.serenegiant.usb.widget.UVCCameraTextureView
             android:id="@+id/camera_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="1000px"
             android:layout_gravity="center"
             />
     </FrameLayout>

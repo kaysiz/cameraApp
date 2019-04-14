@@ -149,6 +149,9 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
     private boolean isRunout = false;
 
+    private boolean resizing = false;
+    private boolean runoutMode = false;
+
     private int runout = 0;
 
     // LBW resizable shape
@@ -201,7 +204,11 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                     case MotionEvent.ACTION_UP:
                         clr_button.callOnClick();
                         show_buttons();
-                        join_btn.callOnClick();
+                        if (runoutMode) {
+                            canvas.drawLine(img_1.getX() + (img_1.getWidth() / 2), img_1.getY() + (img_1.getHeight() / 2), img_2.getX() + (img_2.getWidth() / 2), img_2.getY() + (img_2.getHeight() / 2), paint);
+                        } else {
+                            join_btn.callOnClick();
+                        }
                         break;
                     default:
                         return false;
@@ -224,7 +231,11 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                     case MotionEvent.ACTION_UP:
                         clr_button.callOnClick();
                         show_buttons();
-                        join_btn.callOnClick();
+                        if (runoutMode) {
+                            canvas.drawLine(img_1.getX() + (img_1.getWidth() / 2), img_1.getY() + (img_1.getHeight() / 2), img_2.getX() + (img_2.getWidth() / 2), img_2.getY() + (img_2.getHeight() / 2), paint);
+                        } else {
+                            join_btn.callOnClick();
+                        }
                         break;
                     default:
                         return false;
@@ -338,6 +349,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         imageView.setOnTouchListener(null);
                         drawing = false;
                         isLBW = false;
+                        resizing = false;
                         Toast.makeText(getApplicationContext(), "Zoom mode active, frame and draw mode deactivated", Toast.LENGTH_SHORT).show();
                         return false; // true to keep the Speed Dial open
                     case R.id.action_draw:
@@ -350,6 +362,7 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                             imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
                             drawing = true;
                             isLBW = false;
+                            runoutMode = false;
                             framing = 0;
                             paint.setStrokeWidth(10);
                             Toast.makeText(getApplicationContext(), "Drawing mode activated, zoom and frame feature deactivated!", Toast.LENGTH_SHORT).show();
@@ -365,7 +378,8 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         } else {
                             imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
                             isLBW = true;
-
+                            resizing = false;
+                            runoutMode = false;
                             paint.setStrokeWidth(50);
                             drawing = false;
                             // make the line transparent
@@ -377,13 +391,14 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         if (isRunout) {
                             isRunout = false;
                             // make the line transparent
+                            runoutMode = false;
                             runout = 0;
                             paint.setAlpha(0);
                             Toast.makeText(getApplicationContext(), "Runout mode deactivated", Toast.LENGTH_SHORT).show();
                         } else {
                             imageView.setOnTouchListener(PlayVideoActivity.this::onTouch);
                             isRunout = true;
-
+                            resizing = false;
                             paint.setStrokeWidth(30);
                             isLBW = false;
                             drawing = false;
@@ -715,8 +730,9 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
                         canvas.drawBitmap(bitmap,0,0,paint);
 
                         framing = 0;
+                        resizing = true;
                         canvas.drawPath(path, paint);
-//                        Toast.makeText(getApplicationContext(), "LBW mode deactivated, you can resize the diagram", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "LBW mode deactivated, you can resize the diagram", Toast.LENGTH_SHORT).show();
                         // reset the points to zero after drawing the points
                         point1x = 0;
                         point1y = 0;
@@ -729,15 +745,26 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
 
                         paint.setStyle(Paint.Style.STROKE);
                         imageView.invalidate();
+                        isLBW = false;
                         break;
                     }
                     framing += 1;
                 } else if (isRunout) {
                     if (runout == 1) {
+                        img_2.setX(downx + (img_2.getWidth() / 2));
+                        img_2.setY(downy + (img_2.getWidth() / 2));
+                        img_2.setVisibility(View.VISIBLE);
                         canvas.drawLine(downx, downy, upx, upy, paint);
                         imageView.invalidate();
+                        Toast.makeText(getApplicationContext(), "Runout mode deactivated, you can resize the lines", Toast.LENGTH_SHORT).show();
                         runout = 0;
-                    } else {
+                        runoutMode = true;
+                    } else if(runout == 0) {
+                        img_1.setX(downx + (img_1.getWidth() / 2));
+                        img_1.setY(downy + (img_1.getWidth() / 2));
+                        img_1.setVisibility(View.VISIBLE);
+                        runout++;
+                    }else {
                         runout++;
                     }
                 }
@@ -770,10 +797,15 @@ public class PlayVideoActivity extends AppCompatActivity  implements TextureView
     }
 
     public void show_buttons() {
-        img_1.setVisibility(View.VISIBLE);
-        img_2.setVisibility(View.VISIBLE);
-        img_3.setVisibility(View.VISIBLE);
-        img_4.setVisibility(View.VISIBLE);
+        if (runoutMode) {
+            img_1.setVisibility(View.VISIBLE);
+            img_2.setVisibility(View.VISIBLE);
+        } else if (resizing){
+            img_1.setVisibility(View.VISIBLE);
+            img_2.setVisibility(View.VISIBLE);
+            img_3.setVisibility(View.VISIBLE);
+            img_4.setVisibility(View.VISIBLE);
+        }
     }
 
 }

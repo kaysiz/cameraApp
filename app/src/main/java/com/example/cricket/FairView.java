@@ -25,6 +25,7 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.constraintlayout.widget.Constraints;
 import butterknife.ButterKnife;
 
 
@@ -145,7 +147,6 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
 
         mTextureView = findViewById(R.id.camera_view);
 //        mToolbar = findViewById(R.id.toolbar);
-
         mButton = findViewById(R.id.button);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,7 +170,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         });
 
         mChronometer = findViewById(R.id.chronometer);
-        mTextureView = findViewById(R.id.textureView);
+//        mTextureView = findViewById(R.id.textureView);
         mRecordImageButton = findViewById(R.id.videoOnlineImageButton);
         mRecordImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,7 +262,8 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
 
     @Override
     public void onSurfaceChanged(CameraViewInterface view, Surface surface, int width, int height) {
-
+        Toast.makeText(getApplicationContext(),mTextureView.getWidth() + " and " + mTextureView.getHeight(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),width + " and " + height, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -311,6 +313,7 @@ public class FairView extends AppCompatActivity implements CameraDialog.CameraDi
         @Override
         public void run() {
             if (!mCameraHelper.isPushing()) {
+//                mTextureView.setLayoutParams(new Constraints.LayoutParams()); = 1500;
                 String videoPath = UVCCameraHelper.ROOT_PATH + "Movies/Cricket/raw/" + System.currentTimeMillis();
                 mButton.setEnabled(false);
                 isRecording = true;
